@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.krygodev.singlesplanet.R
@@ -31,7 +30,7 @@ fun SignInScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White), contentAlignment = Alignment.TopCenter
+                .background(Color(R.color.background)), contentAlignment = Alignment.TopCenter
         ) {
 
             Image(painterResource(id = R.drawable.img), contentDescription = "logo")
