@@ -144,7 +144,7 @@ fun SignInScreen(
                             contentColor = MaterialTheme.colors.background,
                             backgroundColor = MaterialTheme.colors.secondary
                         ),
-                        modifier = Modifier.width(280.dp)
+                        modifier = Modifier.width(280.dp).height(50.dp)
                     ) {
                         if (state.isLoading) {
                             Row(

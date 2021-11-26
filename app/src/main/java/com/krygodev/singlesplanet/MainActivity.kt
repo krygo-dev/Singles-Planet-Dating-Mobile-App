@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.krygodev.singlesplanet.home.HomeScreen
 import com.krygodev.singlesplanet.sign_in.SignInScreen
 import com.krygodev.singlesplanet.sign_up.SignUpScreen
 import com.krygodev.singlesplanet.ui.theme.SinglesPlanetTheme
@@ -49,6 +50,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.SignUpScreen.route) {
                             SignUpScreen(navController = navController)
+                        }
+                        composable(route = Screen.HomeScreen.route) {
+                            HomeScreen(navController = navController)
                         }
                     }
                 }
