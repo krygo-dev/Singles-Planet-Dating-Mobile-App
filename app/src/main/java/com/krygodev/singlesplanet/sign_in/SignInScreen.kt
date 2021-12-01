@@ -47,7 +47,7 @@ fun SignInScreen(
                     )
                 }
                 is UIEvent.Success -> {
-                    navController.navigate(Screen.HomeScreen.route)
+                    navController.navigate(Screen.StartupScreen.route)
                 }
             }
         }

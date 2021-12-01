@@ -17,6 +17,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.krygodev.singlesplanet.home.HomeScreen
 import com.krygodev.singlesplanet.sign_in.SignInScreen
 import com.krygodev.singlesplanet.sign_up.SignUpScreen
+import com.krygodev.singlesplanet.startup.StartupScreen
 import com.krygodev.singlesplanet.ui.theme.SinglesPlanetTheme
 import com.krygodev.singlesplanet.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +54,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.HomeScreen.route) {
                             HomeScreen(navController = navController)
+                        }
+                        composable(route = Screen.StartupScreen.route) {
+                            StartupScreen(navController = navController)
                         }
                     }
                 }

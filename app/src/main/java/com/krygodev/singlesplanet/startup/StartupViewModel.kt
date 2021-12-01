@@ -1,9 +1,12 @@
 package com.krygodev.singlesplanet.startup
 
+import android.app.DatePickerDialog
+import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.ProfileRepository
@@ -16,6 +19,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,8 +44,8 @@ class StartupViewModel @Inject constructor(
     private val _photoURL = mutableStateOf("")
     val photoURL: State<String> = _photoURL
 
-    private val _age = mutableStateOf("")
-    val age: State<String> = _age
+    private val _birthDate = mutableStateOf("")
+    val birthDate: State<String> = _birthDate
 
     private val _latitude = mutableStateOf(0.0)
     val latitude: State<Double> = _latitude
@@ -68,8 +73,8 @@ class StartupViewModel @Inject constructor(
             is StartupEvent.PickedInterestedGender -> {
                 _interestedGender.value = event.value
             }
-            is StartupEvent.PickedAge -> {
-                _age.value = event.value
+            is StartupEvent.PickedBirthDate -> {
+                _birthDate.value = event.value
             }
             is StartupEvent.PickedPhoto -> {
                 _photoURL.value = event.value
@@ -84,7 +89,7 @@ class StartupViewModel @Inject constructor(
                 viewModelScope.launch {
                     if (gender.value.isBlank() ||
                         interestedGender.value.isBlank() ||
-                        age.value.isBlank() ||
+                        birthDate.value.isBlank() ||
                         photoURL.value.isBlank() ||
                         latitude.value.isNaN() ||
                         longitude.value.isNaN()
@@ -95,7 +100,12 @@ class StartupViewModel @Inject constructor(
                             uid = user.uid,
                             email = user.email,
                             name = user.name,
-                            age = age.value,
+                            birthDate = Timestamp(
+                                SimpleDateFormat(
+                                    "dd-MM-yyyy",
+                                    Locale.ENGLISH
+                                ).parse(birthDate.value)!!.time, 0
+                            ),
                             bio = bio.value,
                             gender = gender.value,
                             interestedGender = interestedGender.value,
@@ -156,7 +166,7 @@ class StartupViewModel @Inject constructor(
 
                                     user = result.data!!
 
-                                    _eventFlow.emit(UIEvent.ShowSnackbar("Data loaded"))
+                                    _eventFlow.emit(UIEvent.ShowSnackbar("User data loaded!"))
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -172,5 +182,18 @@ class StartupViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun selectDate(context: Context) {
+        val currentDateTime = Calendar.getInstance()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(context, { _, year, month, day ->
+            val pickedDate = Calendar.getInstance()
+            pickedDate.set(year, month, day)
+            _birthDate.value = "$day-$month-$year"
+        }, startYear, startMonth, startDay).show()
     }
 }
