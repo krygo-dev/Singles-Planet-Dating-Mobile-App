@@ -33,10 +33,9 @@ fun SignUpScreen(
     val state = viewModel.state.value
     val emailState = viewModel.email.value
     val passwordState = viewModel.password.value
-    val repeatPasswordState = viewModel.repeatPassword.value
+    val nameState = viewModel.name.value
     val scaffoldState = rememberScaffoldState()
     var passwordVisibility by remember { mutableStateOf(false) }
-    var repeatPasswordVisibility by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -45,6 +44,9 @@ fun SignUpScreen(
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
+                }
+                is UIEvent.Success -> {
+                    navController.popBackStack()
                 }
             }
         }
@@ -83,6 +85,30 @@ fun SignUpScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Box {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(
+                                    color = MaterialTheme.colors.background,
+                                    shape = RoundedCornerShape(5.dp)
+                                )
+                        )
+                        OutlinedTextField(
+                            value = nameState,
+                            onValueChange = { viewModel.onEvent(SignUpEvent.EnteredName(it)) },
+                            placeholder = { Text(text = "First name") },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colors.primary,
+                                cursorColor = MaterialTheme.colors.primaryVariant,
+                                unfocusedBorderColor = MaterialTheme.colors.primary,
+                                textColor = MaterialTheme.colors.primaryVariant,
+                                placeholderColor = MaterialTheme.colors.primaryVariant,
+                            ),
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                     Box {
                         Box(
                             modifier = Modifier
@@ -136,48 +162,6 @@ fun SignUpScreen(
                             },
                             onValueChange = { viewModel.onEvent(SignUpEvent.EnteredPassword(it)) },
                             placeholder = { Text(text = "Password") },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = MaterialTheme.colors.primary,
-                                cursorColor = MaterialTheme.colors.primaryVariant,
-                                unfocusedBorderColor = MaterialTheme.colors.primary,
-                                textColor = MaterialTheme.colors.primaryVariant,
-                                placeholderColor = MaterialTheme.colors.primaryVariant,
-                            ),
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Box {
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .background(
-                                    color = MaterialTheme.colors.background,
-                                    shape = RoundedCornerShape(5.dp)
-                                )
-                        )
-                        OutlinedTextField(
-                            value = repeatPasswordState,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                            visualTransformation = if (repeatPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                            trailingIcon = {
-                                val icon =
-                                    if (repeatPasswordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-
-                                IconButton(
-                                    onClick = {
-                                        repeatPasswordVisibility = !repeatPasswordVisibility
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = icon,
-                                        contentDescription = "Show/hide password",
-                                        tint = MaterialTheme.colors.primaryVariant
-                                    )
-                                }
-                            },
-                            onValueChange = { viewModel.onEvent(SignUpEvent.EnteredRepeatPassword(it)) },
-                            placeholder = { Text(text = "Repeat password") },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
                                 focusedBorderColor = MaterialTheme.colors.primary,
                                 cursorColor = MaterialTheme.colors.primaryVariant,

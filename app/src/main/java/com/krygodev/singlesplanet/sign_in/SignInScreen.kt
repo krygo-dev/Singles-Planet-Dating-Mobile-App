@@ -46,6 +46,9 @@ fun SignInScreen(
                         message = event.message
                     )
                 }
+                is UIEvent.Success -> {
+                    navController.navigate(Screen.HomeScreen.route)
+                }
             }
         }
     }

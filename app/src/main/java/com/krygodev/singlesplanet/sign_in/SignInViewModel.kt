@@ -65,6 +65,7 @@ class SignInViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar("Signed in!"))
+                                    _eventFlow.emit(UIEvent.Success)
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(

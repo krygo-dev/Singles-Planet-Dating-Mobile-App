@@ -8,7 +8,7 @@ interface AuthenticationRepository {
 
     suspend fun signIn(email: String, password: String): Flow<Resource<AuthResult>>
 
-    suspend fun signUp(email: String, password: String): Flow<Resource<AuthResult>>
+    suspend fun signUp(email: String, password: String, name: String): Flow<Resource<AuthResult>>
 
     suspend fun resetPassword(email: String): Flow<Resource<Void>>
 

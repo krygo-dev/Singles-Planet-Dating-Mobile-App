@@ -34,7 +34,7 @@ class AuthenticationRepositoryImpl(
             }
         }
 
-    override suspend fun signUp(email: String, password: String): Flow<Resource<AuthResult>> =
+    override suspend fun signUp(email: String, password: String, name: String): Flow<Resource<AuthResult>> =
         flow {
             emit(Resource.Loading())
 
@@ -42,7 +42,7 @@ class AuthenticationRepositoryImpl(
                 val result = _firebaseAuth.createUserWithEmailAndPassword(email, password).await()
 
                 result.user?.let { user ->
-                    val newUser = User(uid = user.uid, email = user.email)
+                    val newUser = User(uid = user.uid, email = user.email, name = name)
                     createNewUserInDB(newUser)
                 }
 

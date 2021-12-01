@@ -29,8 +29,8 @@ class SignUpViewModel @Inject constructor(
     private val _password = mutableStateOf("")
     val password: State<String> = _password
 
-    private val _repeatPassword = mutableStateOf("")
-    val repeatPassword: State<String> = _repeatPassword
+    private val _name = mutableStateOf("")
+    val name: State<String> = _name
 
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -43,19 +43,18 @@ class SignUpViewModel @Inject constructor(
             is SignUpEvent.EnteredPassword -> {
                 _password.value = event.value
             }
-            is SignUpEvent.EnteredRepeatPassword -> {
-                _repeatPassword.value = event.value
+            is SignUpEvent.EnteredName -> {
+                _name.value = event.value
             }
             is SignUpEvent.SignUp -> {
                 viewModelScope.launch {
-                    if (email.value.isBlank() || password.value.isBlank() || repeatPassword.value.isBlank()) {
-                        _eventFlow.emit(UIEvent.ShowSnackbar("Enter email address, password and repeated password!"))
-                    } else if (password.value != repeatPassword.value) {
-                        _eventFlow.emit(UIEvent.ShowSnackbar("Passwords are different!"))
+                    if (email.value.isBlank() || password.value.isBlank() || name.value.isBlank()) {
+                        _eventFlow.emit(UIEvent.ShowSnackbar("Enter email address, password and your name!"))
                     } else {
                         _authenticationRepository.signUp(
                             email = email.value,
-                            password = password.value
+                            password = password.value,
+                            name = name.value
                         ).onEach { result ->
                             when (result) {
                                 is Resource.Loading -> {
@@ -72,6 +71,7 @@ class SignUpViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar("Account created!"))
+                                    _eventFlow.emit(UIEvent.Success)
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
