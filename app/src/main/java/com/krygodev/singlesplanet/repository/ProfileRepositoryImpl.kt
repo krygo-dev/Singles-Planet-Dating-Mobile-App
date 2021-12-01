@@ -33,14 +33,14 @@ class ProfileRepositoryImpl(
         }
     }
 
-    override suspend fun setOrUpdateUserData(user: User): Flow<Resource<Boolean>> = flow {
+    override suspend fun setOrUpdateUserData(user: User): Flow<Resource<Void>> = flow {
         emit(Resource.Loading())
 
         try {
             val result =
                 _firebaseFirestore.collection(Constants.USER_COLLECTION).document(user.uid!!)
                     .update(user.serializeToMap()).await()
-            emit(Resource.Success(true))
+            emit(Resource.Success(result))
         } catch (e: HttpException) {
             emit(Resource.Error(message = "Something went wrong!"))
         } catch (e: IOException) {

@@ -32,5 +32,5 @@ data class User(
     val gender: String? = null,
     val interestedGender: String? = null,
     val photoURL: String? = null,
-    val location: List<Int>? = null,
+    val location: List<Double>? = null,
 )

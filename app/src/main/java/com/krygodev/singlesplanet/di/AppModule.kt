@@ -4,6 +4,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.AuthenticationRepositoryImpl
+import com.krygodev.singlesplanet.repository.ProfileRepository
+import com.krygodev.singlesplanet.repository.ProfileRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +35,13 @@ object AppModule {
         firebaseFirestore: FirebaseFirestore
     ): AuthenticationRepository {
         return AuthenticationRepositoryImpl(firebaseAuth, firebaseFirestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        firebaseFirestore: FirebaseFirestore
+    ): ProfileRepository {
+        return ProfileRepositoryImpl(firebaseFirestore)
     }
 }
