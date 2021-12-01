@@ -8,5 +8,5 @@ interface ProfileRepository {
 
     suspend fun getUserData(uid: String): Flow<Resource<User>>
 
-    suspend fun setOrUpdateUserData(user: User): Flow<Resource<Any>>
+    suspend fun setOrUpdateUserData(user: User): Flow<Resource<Boolean>>
 }

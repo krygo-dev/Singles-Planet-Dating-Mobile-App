@@ -61,6 +61,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.activity:activity-compose:1.4.0'
 
+    // GSON
+    implementation 'com.google.code.gson:gson:2.8.9'
+
     // Google Accompanist
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
 
