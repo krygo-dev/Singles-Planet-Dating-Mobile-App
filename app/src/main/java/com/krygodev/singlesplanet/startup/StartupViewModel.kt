@@ -2,6 +2,7 @@ package com.krygodev.singlesplanet.startup
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -181,6 +182,39 @@ class StartupViewModel @Inject constructor(
                     }
                 }
             }
+            is StartupEvent.UploadPhoto -> {
+                viewModelScope.launch {
+                    _profileRepository.uploadUserPhoto(uid = user.uid!!, photoURI = event.value)
+                        .onEach { result ->
+                            when (result) {
+                                is Resource.Loading -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = true,
+                                        error = "",
+                                        result = result.data
+                                    )
+                                }
+                                is Resource.Success -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = "",
+                                        result = result.data
+                                    )
+                                    _photoURL.value = result.data.toString()
+                                    _eventFlow.emit(UIEvent.ShowSnackbar("Photo uploaded!"))
+                                }
+                                is Resource.Error -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = result.message!!,
+                                        result = result.data
+                                    )
+                                    _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                                }
+                            }
+                        }.launchIn(this)
+                }
+            }
         }
     }
 
@@ -194,6 +228,7 @@ class StartupViewModel @Inject constructor(
             val pickedDate = Calendar.getInstance()
             pickedDate.set(year, month, day)
             _birthDate.value = "$day-$month-$year"
+            Log.d("VIEWMODEL", "Chosen date: ${birthDate.value}")
         }, startYear, startMonth, startDay).show()
     }
 }

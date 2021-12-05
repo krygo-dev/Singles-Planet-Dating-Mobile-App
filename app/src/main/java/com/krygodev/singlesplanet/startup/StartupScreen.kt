@@ -1,16 +1,24 @@
 package com.krygodev.singlesplanet.startup
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,7 +26,6 @@ import androidx.navigation.NavController
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
 
 @Composable
 fun StartupScreen(
@@ -29,12 +36,20 @@ fun StartupScreen(
     val bioState = viewModel.bio.value
     val genderState = viewModel.gender.value
     val interestedGenderState = viewModel.interestedGender.value
-    val photoURLState = viewModel.photoURL.value
-    val birthDateState = viewModel.birthDate.value
-    val latitudeState = viewModel.latitude.value
-    val longitudeState = viewModel.longitude.value
+    val photoUrlState = viewModel.photoURL.value
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
+
+    var photoUriState by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        photoUriState = uri
+    }
+
+    val bitmap = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -65,7 +80,38 @@ fun StartupScreen(
                         viewModel.selectDate(context = context)
                     }
                 ) {
-                    Text(text = "Select Date", color = Color.White)
+                    Text(text = "Select Date", color = Color.Black)
+                }
+            }
+            item {
+                TextButton(
+                    onClick = {
+                        launcher.launch("image/*")
+                    }
+                ) {
+                    Text(text = "Select image", color = Color.Black)
+                }
+            }
+            item {
+                photoUriState?.let {
+                    if (Build.VERSION.SDK_INT < 28) {
+                        bitmap.value = MediaStore.Images
+                            .Media.getBitmap(context.contentResolver, it)
+                        viewModel.onEvent(StartupEvent.UploadPhoto(photoUriState!!))
+
+                    } else {
+                        val source = ImageDecoder
+                            .createSource(context.contentResolver, it)
+                        bitmap.value = ImageDecoder.decodeBitmap(source)
+                    }
+
+                    bitmap.value?.let { btm ->
+                        Image(
+                            bitmap = btm.asImageBitmap(),
+                            contentDescription = null,
+                            modifier = Modifier.size(400.dp)
+                        )
+                    }
                 }
             }
         }
