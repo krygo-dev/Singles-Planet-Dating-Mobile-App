@@ -90,6 +90,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.0.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
 
+    // GMS
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
     implementation 'com.google.android.gms:play-services-auth:19.2.0'

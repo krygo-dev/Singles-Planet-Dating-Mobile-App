@@ -7,7 +7,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.ProfileRepository
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -48,12 +46,6 @@ class StartupViewModel @Inject constructor(
     private val _birthDate = mutableStateOf("")
     val birthDate: State<String> = _birthDate
 
-    private val _latitude = mutableStateOf(0.0)
-    val latitude: State<Double> = _latitude
-
-    private val _longitude = mutableStateOf(0.0)
-    val longitude: State<Double> = _longitude
-
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -80,20 +72,12 @@ class StartupViewModel @Inject constructor(
             is StartupEvent.PickedPhoto -> {
                 _photoURL.value = event.value
             }
-            is StartupEvent.CheckedLatitude -> {
-                _latitude.value = event.value
-            }
-            is StartupEvent.CheckedLongitude -> {
-                _longitude.value = event.value
-            }
             is StartupEvent.Submit -> {
                 viewModelScope.launch {
                     if (gender.value.isBlank() ||
                         interestedGender.value.isBlank() ||
                         birthDate.value.isBlank() ||
-                        photoURL.value.isBlank() ||
-                        latitude.value.isNaN() ||
-                        longitude.value.isNaN()
+                        photoURL.value.isBlank()
                     ) {
                         _eventFlow.emit(UIEvent.ShowSnackbar("Fill up all fields marked with '*'!"))
                     } else {
@@ -101,17 +85,11 @@ class StartupViewModel @Inject constructor(
                             uid = user.uid,
                             email = user.email,
                             name = user.name,
-                            birthDate = Timestamp(
-                                SimpleDateFormat(
-                                    "dd-MM-yyyy",
-                                    Locale.ENGLISH
-                                ).parse(birthDate.value)!!.time, 0
-                            ),
+                            birthDate = birthDate.value,
                             bio = bio.value,
                             gender = gender.value,
                             interestedGender = interestedGender.value,
-                            photoURL = photoURL.value,
-                            location = listOf(latitude.value, longitude.value)
+                            photoURL = photoURL.value
                         )
                         _profileRepository.setOrUpdateUserData(user = user).onEach { result ->
                             when (result) {
@@ -129,6 +107,7 @@ class StartupViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar("User updated!"))
+                                    _eventFlow.emit(UIEvent.Success)
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -201,7 +180,8 @@ class StartupViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _photoURL.value = result.data.toString()
-                                    _eventFlow.emit(UIEvent.ShowSnackbar("Photo uploaded!"))
+                                    //_eventFlow.emit(UIEvent.ShowSnackbar("Photo uploaded!"))
+                                    _eventFlow.emit(UIEvent.PhotoUploaded)
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(

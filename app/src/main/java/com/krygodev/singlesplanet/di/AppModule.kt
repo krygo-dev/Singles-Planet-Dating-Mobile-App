@@ -2,6 +2,7 @@ package com.krygodev.singlesplanet.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.AuthenticationRepositoryImpl
 import com.krygodev.singlesplanet.repository.ProfileRepository
@@ -30,6 +31,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseStorage(): FirebaseStorage {
+        return FirebaseStorage.getInstance()
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthenticationRepository(
         firebaseAuth: FirebaseAuth,
         firebaseFirestore: FirebaseFirestore
@@ -40,8 +47,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideProfileRepository(
-        firebaseFirestore: FirebaseFirestore
+        firebaseFirestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage
     ): ProfileRepository {
-        return ProfileRepositoryImpl(firebaseFirestore)
+        return ProfileRepositoryImpl(firebaseFirestore, firebaseStorage)
     }
 }
