@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.auth.FirebaseAuth
 import com.krygodev.singlesplanet.home.HomeScreen
 import com.krygodev.singlesplanet.sign_in.SignInScreen
 import com.krygodev.singlesplanet.sign_up.SignUpScreen
@@ -26,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val firebaseAuthentication = FirebaseAuth.getInstance()
 
         setContent {
             SinglesPlanetTheme {
@@ -59,6 +62,10 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.StartupScreen.route) {
                             StartupScreen(navController = navController)
                         }
+                    }
+
+                    firebaseAuthentication.currentUser?.let {
+                        navController.navigate(Screen.HomeScreen.route)
                     }
                 }
             }

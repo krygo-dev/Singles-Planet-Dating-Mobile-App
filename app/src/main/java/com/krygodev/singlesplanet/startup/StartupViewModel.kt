@@ -146,6 +146,9 @@ class StartupViewModel @Inject constructor(
 
                                     user = result.data!!
 
+                                    if (!user.photoURL.isNullOrEmpty()) {
+                                        _eventFlow.emit(UIEvent.Success)
+                                    }
                                     _eventFlow.emit(UIEvent.ShowSnackbar("User data loaded!"))
                                 }
                                 is Resource.Error -> {
