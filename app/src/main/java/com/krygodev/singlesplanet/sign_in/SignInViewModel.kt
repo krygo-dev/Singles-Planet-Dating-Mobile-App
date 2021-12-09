@@ -10,6 +10,7 @@ import com.krygodev.singlesplanet.util.Resource
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -65,6 +66,9 @@ class SignInViewModel @Inject constructor(
                                         error = "",
                                         result = result.data
                                     )
+
+                                    _eventFlow.emit(UIEvent.ShowSnackbar("Signed in!"))
+                                    delay(1000)
 
                                     if (_authenticationRepository.isUserFirstLogin()) {
                                         _eventFlow.emit(UIEvent.Success(Screen.StartupScreen.route))

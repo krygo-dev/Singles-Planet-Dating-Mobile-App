@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.krygodev.singlesplanet.util.Gender
-import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -299,7 +298,7 @@ fun StartupScreen(
             item {
                 OutlinedButton(
                     onClick = {
-                        viewModel.onEvent(StartupEvent.UploadPhoto(photoUriState!!))
+                        viewModel.onEvent(StartupEvent.UploadPhoto(photoUriState))
                     },
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.outlinedButtonColors(

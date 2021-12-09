@@ -15,6 +15,7 @@ import com.krygodev.singlesplanet.util.Resource
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -42,7 +43,7 @@ class StartupViewModel @Inject constructor(
     val interestedGender: State<String> = _interestedGender
 
     private val _photoURL = mutableStateOf("")
-    val photoURL: State<String> = _photoURL
+    private val photoURL: State<String> = _photoURL
 
     private val _birthDate = mutableStateOf("")
     val birthDate: State<String> = _birthDate
@@ -70,9 +71,6 @@ class StartupViewModel @Inject constructor(
             is StartupEvent.PickedBirthDate -> {
                 _birthDate.value = event.value
             }
-            is StartupEvent.PickedPhoto -> {
-                _photoURL.value = event.value
-            }
             is StartupEvent.Submit -> {
                 viewModelScope.launch {
                     if (gender.value.isBlank() ||
@@ -80,7 +78,7 @@ class StartupViewModel @Inject constructor(
                         birthDate.value.isBlank() ||
                         photoURL.value.isBlank()
                     ) {
-                        _eventFlow.emit(UIEvent.ShowSnackbar("Fill up all fields marked with '*'!"))
+                        _eventFlow.emit(UIEvent.ShowSnackbar("First select photo, your birth date and gender and gender you looking for!"))
                     } else {
                         user = User(
                             uid = user.uid,
@@ -107,7 +105,8 @@ class StartupViewModel @Inject constructor(
                                         error = "",
                                         result = result.data
                                     )
-
+                                    _eventFlow.emit(UIEvent.ShowSnackbar("Data saved!"))
+                                    delay(1000)
                                     _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
                                 }
                                 is Resource.Error -> {
@@ -146,8 +145,6 @@ class StartupViewModel @Inject constructor(
                                     )
 
                                     user = result.data!!
-
-                                    _eventFlow.emit(UIEvent.ShowSnackbar("User data loaded!"))
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -164,36 +161,40 @@ class StartupViewModel @Inject constructor(
             }
             is StartupEvent.UploadPhoto -> {
                 viewModelScope.launch {
-                    _profileRepository.uploadUserPhoto(uid = user.uid!!, photoURI = event.value)
-                        .onEach { result ->
-                            when (result) {
-                                is Resource.Loading -> {
-                                    _state.value = state.value.copy(
-                                        isLoading = true,
-                                        error = "",
-                                        result = result.data
-                                    )
-                                }
-                                is Resource.Success -> {
-                                    _state.value = state.value.copy(
-                                        isLoading = false,
-                                        error = "",
-                                        result = result.data
-                                    )
-                                    _photoURL.value = result.data.toString()
+                    if (event.value == null) {
+                        _eventFlow.emit(UIEvent.ShowSnackbar("Select your profile photo!"))
+                    } else {
+                        _profileRepository.uploadUserPhoto(uid = user.uid!!, photoURI = event.value)
+                            .onEach { result ->
+                                when (result) {
+                                    is Resource.Loading -> {
+                                        _state.value = state.value.copy(
+                                            isLoading = true,
+                                            error = "",
+                                            result = result.data
+                                        )
+                                    }
+                                    is Resource.Success -> {
+                                        _state.value = state.value.copy(
+                                            isLoading = false,
+                                            error = "",
+                                            result = result.data
+                                        )
+                                        _photoURL.value = result.data.toString()
 
-                                    _eventFlow.emit(UIEvent.PhotoUploaded)
+                                        _eventFlow.emit(UIEvent.PhotoUploaded)
+                                    }
+                                    is Resource.Error -> {
+                                        _state.value = state.value.copy(
+                                            isLoading = false,
+                                            error = result.message!!,
+                                            result = result.data
+                                        )
+                                        _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                                    }
                                 }
-                                is Resource.Error -> {
-                                    _state.value = state.value.copy(
-                                        isLoading = false,
-                                        error = result.message!!,
-                                        result = result.data
-                                    )
-                                    _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
-                                }
-                            }
-                        }.launchIn(this)
+                            }.launchIn(this)
+                    }
                 }
             }
         }
