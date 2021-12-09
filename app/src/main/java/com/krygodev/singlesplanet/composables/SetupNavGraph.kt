@@ -21,7 +21,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Constants.HOME_GRAPH_ROUTE,
+        startDestination = Constants.AUTH_GRAPH_ROUTE,
         route = Constants.ROOT_GRAPH_ROUTE
     ) {
         authenticationNavGraph(navController = navController)

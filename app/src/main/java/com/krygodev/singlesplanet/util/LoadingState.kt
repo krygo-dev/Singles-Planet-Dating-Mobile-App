@@ -1,6 +1,6 @@
 package com.krygodev.singlesplanet.util
 
-data class AuthenticationState(
+data class LoadingState(
     val isLoading: Boolean = false,
     val result: Any? = null,
     val error: String = ""

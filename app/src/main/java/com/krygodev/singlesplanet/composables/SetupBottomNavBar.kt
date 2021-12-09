@@ -1,9 +1,7 @@
 package com.krygodev.singlesplanet.composables
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.krygodev.singlesplanet.util.BottomNavItem
@@ -23,7 +21,7 @@ fun SetupBottomNavBar(
             BottomNavItem(
                 name = "Pairs",
                 route = Screen.PairsScreen.route,
-                icon = Icons.Filled.People
+                icon = Icons.Filled.Groups
             ),
             BottomNavItem(
                 name = "Profile",

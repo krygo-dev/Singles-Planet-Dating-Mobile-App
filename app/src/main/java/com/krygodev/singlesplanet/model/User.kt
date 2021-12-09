@@ -1,6 +1,5 @@
 package com.krygodev.singlesplanet.model
 
-import com.google.firebase.Timestamp
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

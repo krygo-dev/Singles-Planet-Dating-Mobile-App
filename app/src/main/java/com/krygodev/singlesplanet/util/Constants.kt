@@ -10,6 +10,8 @@ object Constants {
     const val HOME_SCREEN_TAG = "HOME_SCREEN"
     const val SIGN_IN_SCREEN_TAG = "SIGN_IN_SCREEN"
     const val SIGN_UP_SCREEN_TAG = "SIGN_UP_SCREEN"
+    const val PROFILE_SCREEN_TAG = "PROFILE_SCREEN"
+    const val PAIRS_SCREEN_TAG = "PAIRS_SCREEN"
 
     // Navigation routes
     const val ROOT_GRAPH_ROUTE = "root"

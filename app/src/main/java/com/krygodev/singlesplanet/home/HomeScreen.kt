@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,11 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.krygodev.singlesplanet.composables.BottomNavBar
 import com.krygodev.singlesplanet.composables.SetupBottomNavBar
-import com.krygodev.singlesplanet.util.BottomNavItem
 import com.krygodev.singlesplanet.util.Constants
-import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -67,9 +60,6 @@ fun HomeScreen(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(text = "Home Screen")
-            Button(onClick = { viewModel.onEvent(HomeEvent.SignOut) }) {
-                Text(text = "Sign out!")
-            }
         }
     }
 }

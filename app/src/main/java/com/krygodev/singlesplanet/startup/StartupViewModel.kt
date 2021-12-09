@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.ProfileRepository
-import com.krygodev.singlesplanet.util.AuthenticationState
+import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
@@ -30,8 +30,8 @@ class StartupViewModel @Inject constructor(
     private val _authenticationRepository: AuthenticationRepository
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(AuthenticationState())
-    val state: State<AuthenticationState> = _state
+    private val _state = mutableStateOf(LoadingState())
+    val state: State<LoadingState> = _state
 
     private val _bio = mutableStateOf("")
     val bio: State<String> = _bio
@@ -51,7 +51,7 @@ class StartupViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var user = User()
+    private var user: User = User()
 
     init {
         onEvent(StartupEvent.GetUserData)
@@ -106,7 +106,7 @@ class StartupViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar("Data saved!"))
-                                    delay(1000)
+                                    delay(500)
                                     _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
                                 }
                                 is Resource.Error -> {

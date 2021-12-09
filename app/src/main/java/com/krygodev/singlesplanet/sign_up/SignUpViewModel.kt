@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
-import com.krygodev.singlesplanet.util.AuthenticationState
+import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
@@ -22,8 +22,8 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val _authenticationRepository: AuthenticationRepository
 ) : ViewModel() {
-    private val _state = mutableStateOf(AuthenticationState())
-    val state: State<AuthenticationState> = _state
+    private val _state = mutableStateOf(LoadingState())
+    val state: State<LoadingState> = _state
 
     private val _email = mutableStateOf("")
     val email: State<String> = _email
@@ -73,7 +73,7 @@ class SignUpViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar("Account created!"))
-                                    delay(1000)
+                                    delay(500)
                                     _eventFlow.emit(UIEvent.Success(Screen.SignInScreen.route))
                                 }
                                 is Resource.Error -> {
