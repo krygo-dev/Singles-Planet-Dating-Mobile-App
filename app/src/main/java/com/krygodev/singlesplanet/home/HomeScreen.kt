@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.krygodev.singlesplanet.composables.BottomNavBar
+import com.krygodev.singlesplanet.composables.SetupBottomNavBar
+import com.krygodev.singlesplanet.util.BottomNavItem
 import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
@@ -47,7 +54,11 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(scaffoldState = scaffoldState, modifier = Modifier.padding(8.dp)) {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        modifier = Modifier.padding(horizontal = 8.dp),
+        bottomBar = { SetupBottomNavBar(navController = navController) }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

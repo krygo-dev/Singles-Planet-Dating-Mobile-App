@@ -10,15 +10,10 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import com.krygodev.singlesplanet.home.HomeScreen
-import com.krygodev.singlesplanet.sign_in.SignInScreen
-import com.krygodev.singlesplanet.sign_up.SignUpScreen
-import com.krygodev.singlesplanet.startup.StartupScreen
+import com.krygodev.singlesplanet.composables.SetupNavGraph
 import com.krygodev.singlesplanet.ui.theme.SinglesPlanetTheme
 import com.krygodev.singlesplanet.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,23 +41,7 @@ class MainActivity : ComponentActivity() {
                     }
                 ) {
                     val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.SignInScreen.route
-                    ) {
-                        composable(route = Screen.SignInScreen.route) {
-                            SignInScreen(navController = navController)
-                        }
-                        composable(route = Screen.SignUpScreen.route) {
-                            SignUpScreen(navController = navController)
-                        }
-                        composable(route = Screen.HomeScreen.route) {
-                            HomeScreen(navController = navController)
-                        }
-                        composable(route = Screen.StartupScreen.route) {
-                            StartupScreen(navController = navController)
-                        }
-                    }
+                    SetupNavGraph(navController = navController)
 
                     firebaseAuthentication.currentUser?.let {
                         navController.navigate(Screen.HomeScreen.route)
