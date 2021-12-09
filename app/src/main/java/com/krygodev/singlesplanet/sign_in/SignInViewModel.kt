@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.util.AuthenticationState
 import com.krygodev.singlesplanet.util.Resource
+import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -64,8 +65,13 @@ class SignInViewModel @Inject constructor(
                                         error = "",
                                         result = result.data
                                     )
-                                    _eventFlow.emit(UIEvent.ShowSnackbar("Signed in!"))
-                                    _eventFlow.emit(UIEvent.Success)
+
+                                    if (_authenticationRepository.isUserFirstLogin()) {
+                                        _eventFlow.emit(UIEvent.Success(Screen.StartupScreen.route))
+                                    } else {
+                                        _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
+                                    }
+
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(

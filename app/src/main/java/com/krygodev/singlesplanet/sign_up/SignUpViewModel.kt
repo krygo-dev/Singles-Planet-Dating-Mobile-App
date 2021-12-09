@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.util.AuthenticationState
 import com.krygodev.singlesplanet.util.Resource
+import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -71,7 +73,8 @@ class SignUpViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar("Account created!"))
-                                    _eventFlow.emit(UIEvent.Success)
+                                    delay(1000)
+                                    _eventFlow.emit(UIEvent.Success(Screen.SignInScreen.route))
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(

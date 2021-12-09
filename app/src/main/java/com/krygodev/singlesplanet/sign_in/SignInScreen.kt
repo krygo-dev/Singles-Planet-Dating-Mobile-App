@@ -1,5 +1,6 @@
 package com.krygodev.singlesplanet.sign_in
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.krygodev.singlesplanet.R
+import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
@@ -47,7 +49,10 @@ fun SignInScreen(
                     )
                 }
                 is UIEvent.Success -> {
-                    navController.navigate(Screen.StartupScreen.route)
+                    navController.navigate(event.route)
+                }
+                else -> {
+                    Log.d(Constants.SIGN_IN_SCREEN_TAG, "Something went wrong!")
                 }
             }
         }

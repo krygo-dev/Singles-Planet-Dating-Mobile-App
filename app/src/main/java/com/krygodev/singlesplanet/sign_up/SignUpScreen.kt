@@ -1,5 +1,6 @@
 package com.krygodev.singlesplanet.sign_up
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -47,6 +49,9 @@ fun SignUpScreen(
                 }
                 is UIEvent.Success -> {
                     navController.popBackStack()
+                }
+                else -> {
+                    Log.d(Constants.SIGN_UP_SCREEN_TAG, "Something went wrong!")
                 }
             }
         }

@@ -45,6 +45,7 @@ fun StartupScreen(
     val context = LocalContext.current
 
     var photoUriState by remember { mutableStateOf<Uri?>(null) }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -64,7 +65,7 @@ fun StartupScreen(
                     )
                 }
                 is UIEvent.Success -> {
-                    navController.navigate(Screen.HomeScreen.route)
+                    navController.navigate(event.route)
                 }
                 is UIEvent.PhotoUploaded -> {
                     viewModel.onEvent(StartupEvent.Submit)

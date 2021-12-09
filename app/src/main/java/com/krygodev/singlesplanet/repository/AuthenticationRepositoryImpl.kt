@@ -35,7 +35,11 @@ class AuthenticationRepositoryImpl(
             }
         }
 
-    override suspend fun signUp(email: String, password: String, name: String): Flow<Resource<AuthResult>> =
+    override suspend fun signUp(
+        email: String,
+        password: String,
+        name: String
+    ): Flow<Resource<AuthResult>> =
         flow {
             emit(Resource.Loading())
 
@@ -46,6 +50,8 @@ class AuthenticationRepositoryImpl(
                     val newUser = User(uid = user.uid, email = user.email, name = name)
                     createNewUserInDB(newUser)
                 }
+
+                _firebaseAuth.signOut()
 
                 emit(Resource.Success(result))
             } catch (e: HttpException) {
@@ -85,6 +91,14 @@ class AuthenticationRepositoryImpl(
         } catch (e: FirebaseAuthException) {
             emit(Resource.Error(message = e.localizedMessage!!))
         }
+    }
+
+    override suspend fun isUserFirstLogin(): Boolean {
+        val user = getCurrentUser()
+        val result =
+            _firebaseFirestore.collection(Constants.USER_COLLECTION).document(user!!.uid).get()
+                .await().toObject(User::class.java)
+        return result!!.photoURL.isNullOrEmpty()
     }
 
     override fun getCurrentUser(): FirebaseUser? {

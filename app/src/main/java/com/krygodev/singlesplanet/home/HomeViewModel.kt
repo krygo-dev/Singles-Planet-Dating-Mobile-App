@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.util.AuthenticationState
 import com.krygodev.singlesplanet.util.Resource
+import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,7 +47,7 @@ class HomeViewModel @Inject constructor(
                                     error = "",
                                     result = result.data
                                 )
-                                _eventFlow.emit(UIEvent.Success)
+                                _eventFlow.emit(UIEvent.Success(Screen.SignInScreen.route))
                             }
                             is Resource.Error -> {
                                 _state.value = state.value.copy(

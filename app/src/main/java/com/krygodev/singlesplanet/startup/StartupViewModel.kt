@@ -12,6 +12,7 @@ import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.ProfileRepository
 import com.krygodev.singlesplanet.util.AuthenticationState
 import com.krygodev.singlesplanet.util.Resource
+import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -106,8 +107,8 @@ class StartupViewModel @Inject constructor(
                                         error = "",
                                         result = result.data
                                     )
-                                    _eventFlow.emit(UIEvent.ShowSnackbar("User updated!"))
-                                    _eventFlow.emit(UIEvent.Success)
+
+                                    _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -146,9 +147,6 @@ class StartupViewModel @Inject constructor(
 
                                     user = result.data!!
 
-                                    if (!user.photoURL.isNullOrEmpty()) {
-                                        _eventFlow.emit(UIEvent.Success)
-                                    }
                                     _eventFlow.emit(UIEvent.ShowSnackbar("User data loaded!"))
                                 }
                                 is Resource.Error -> {
@@ -183,7 +181,7 @@ class StartupViewModel @Inject constructor(
                                         result = result.data
                                     )
                                     _photoURL.value = result.data.toString()
-                                    //_eventFlow.emit(UIEvent.ShowSnackbar("Photo uploaded!"))
+
                                     _eventFlow.emit(UIEvent.PhotoUploaded)
                                 }
                                 is Resource.Error -> {

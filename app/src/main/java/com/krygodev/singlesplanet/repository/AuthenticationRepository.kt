@@ -15,5 +15,7 @@ interface AuthenticationRepository {
 
     suspend fun signOut(): Flow<Resource<Unit>>
 
+    suspend fun isUserFirstLogin(): Boolean
+
     fun getCurrentUser(): FirebaseUser?
 }

@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -13,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -35,10 +38,10 @@ fun HomeScreen(
                     )
                 }
                 is UIEvent.Success -> {
-                    navController.navigate(Screen.SignInScreen.route)
+                    navController.navigate(event.route)
                 }
-                is UIEvent.PhotoUploaded -> {
-                    Log.d("HOME_SCREEN", "Something went wrong!")
+                else -> {
+                    Log.d(Constants.HOME_SCREEN_TAG, "Something went wrong!")
                 }
             }
         }
