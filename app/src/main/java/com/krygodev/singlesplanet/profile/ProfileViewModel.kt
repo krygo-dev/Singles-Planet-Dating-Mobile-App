@@ -42,7 +42,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onEvent(event: ProfileEvent) {
-        when(event) {
+        when (event) {
             is ProfileEvent.SignOut -> {
                 viewModelScope.launch {
                     _authenticationRepository.signOut().onEach { result ->
@@ -115,7 +115,10 @@ class ProfileViewModel @Inject constructor(
             }
             is ProfileEvent.UpdatePhoto -> {
                 viewModelScope.launch {
-                    _profileRepository.uploadUserPhoto(uid = user.value.uid!!, photoURI = event.value)
+                    _profileRepository.uploadUserPhoto(
+                        uid = user.value.uid!!,
+                        photoURI = event.value
+                    )
                         .onEach { result ->
                             when (result) {
                                 is Resource.Loading -> {
@@ -135,10 +138,7 @@ class ProfileViewModel @Inject constructor(
                                     _user.value = user.value.copy(
                                         photoURL = result.data.toString()
                                     )
-
-                                    onEvent(ProfileEvent.UpdateUserData)
-
-//                                    _eventFlow.emit(UIEvent.PhotoUploaded)
+                                    _eventFlow.emit(UIEvent.PhotoUploaded)
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -182,6 +182,11 @@ class ProfileViewModel @Inject constructor(
                         }
                     }.launchIn(this)
                 }
+            }
+            is ProfileEvent.UpdateBio -> {
+                _user.value = user.value.copy(
+                    bio = event.value
+                )
             }
         }
     }

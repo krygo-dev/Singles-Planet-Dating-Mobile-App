@@ -1,10 +1,6 @@
 package com.krygodev.singlesplanet.startup
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -16,16 +12,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import coil.transform.RoundedCornersTransformation
 import com.krygodev.singlesplanet.util.Gender
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
@@ -43,16 +44,12 @@ fun StartupScreen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
 
-    var photoUriState by remember { mutableStateOf<Uri?>(null) }
+    val photoUriState = remember { mutableStateOf<Uri?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        photoUriState = uri
-    }
-
-    val bitmap = remember {
-        mutableStateOf<Bitmap?>(null)
+        photoUriState.value = uri
     }
 
     LaunchedEffect(key1 = true) {
@@ -84,46 +81,34 @@ fun StartupScreen(
             item {
                 Box(
                     modifier = Modifier
-                        .height(400.dp)
-                        .fillMaxWidth()
                         .clickable { launcher.launch("image/*") }
-                        .background(
-                            color = MaterialTheme.colors.background,
-                            shape = RoundedCornerShape(5.dp)
-                        )
+                        .clip(RoundedCornerShape(30.0f)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (photoUriState != null) {
-                        photoUriState?.let {
-                            if (Build.VERSION.SDK_INT < 28) {
-                                bitmap.value = MediaStore.Images
-                                    .Media.getBitmap(context.contentResolver, it)
-
-                            } else {
-                                val source = ImageDecoder
-                                    .createSource(context.contentResolver, it)
-                                bitmap.value = ImageDecoder.decodeBitmap(source)
-                            }
-
-                            bitmap.value?.let { btm ->
-                                Image(
-                                    bitmap = btm.asImageBitmap(),
-                                    contentDescription = "Profile image",
-                                    modifier = Modifier.size(400.dp)
-                                )
-                            }
-                        }
+                    if (photoUriState.value != null) {
+                        Image(
+                            painter = rememberImagePainter(
+                                data = photoUriState.value,
+                                builder = {
+                                    transformations(RoundedCornersTransformation(30.0f))
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier.size(300.dp)
+                        )
                     } else {
                         Icon(
                             imageVector = Icons.Filled.AddAPhoto,
                             tint = MaterialTheme.colors.primary,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(200.dp)
+                                .size(300.dp)
                                 .align(Alignment.Center)
+                                .clip(RoundedCornerShape(30.0f))
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(15.dp))
             }
             item {
                 Box {
@@ -298,14 +283,16 @@ fun StartupScreen(
             item {
                 OutlinedButton(
                     onClick = {
-                        viewModel.onEvent(StartupEvent.UploadPhoto(photoUriState))
+                        viewModel.onEvent(StartupEvent.UploadPhoto(photoUriState.value))
                     },
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colors.background,
                         backgroundColor = MaterialTheme.colors.secondary
                     ),
-                    modifier = Modifier.width(280.dp).height(50.dp)
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(50.dp)
                 ) {
                     if (state.isLoading) {
                         Row(
