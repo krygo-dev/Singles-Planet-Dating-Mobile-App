@@ -169,7 +169,7 @@ class ProfileViewModel @Inject constructor(
                                     error = "",
                                     result = result.data
                                 )
-                                _eventFlow.emit(UIEvent.ShowSnackbar("Data saved!"))
+                                _eventFlow.emit(UIEvent.ShowSnackbar("Profile updated!"))
                             }
                             is Resource.Error -> {
                                 _state.value = state.value.copy(
@@ -186,6 +186,11 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.UpdateBio -> {
                 _user.value = user.value.copy(
                     bio = event.value
+                )
+            }
+            is ProfileEvent.UpdateInterestedGender -> {
+                _user.value = user.value.copy(
+                    interestedGender = event.value
                 )
             }
         }

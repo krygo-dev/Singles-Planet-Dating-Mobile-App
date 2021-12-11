@@ -26,6 +26,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.RoundedCornersTransformation
 import com.krygodev.singlesplanet.composables.SetupBottomNavBar
+import com.krygodev.singlesplanet.util.Gender
 import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
 import java.util.*
@@ -177,8 +178,73 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
                 item {
-                    Text(text = "Looking for: ${user.interestedGender}")
+                    Text(
+                        text = "Currently you are looking for ${user.interestedGender}.",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "(Select another option to change that)",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.secondary
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
+                }
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = user.interestedGender == Gender.male,
+                            onClick = { viewModel.onEvent(ProfileEvent.UpdateInterestedGender(Gender.male)) },
+                            enabled = true,
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colors.secondary,
+                                unselectedColor = MaterialTheme.colors.secondary
+                            )
+                        )
+                        Text(
+                            text = Gender.male,
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colors.secondary,
+                            fontSize = 20.sp
+                        )
+                        Spacer(modifier = Modifier.width(32.dp))
+                        RadioButton(
+                            selected = user.interestedGender == Gender.female,
+                            onClick = { viewModel.onEvent(ProfileEvent.UpdateInterestedGender(Gender.female)) },
+                            enabled = true,
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colors.secondary,
+                                unselectedColor = MaterialTheme.colors.secondary
+                            )
+                        )
+                        Text(
+                            text = Gender.female,
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colors.secondary,
+                            fontSize = 20.sp
+                        )
+                        Spacer(modifier = Modifier.width(32.dp))
+                        RadioButton(
+                            selected = user.interestedGender == Gender.both,
+                            onClick = { viewModel.onEvent(ProfileEvent.UpdateInterestedGender(Gender.both)) },
+                            enabled = true,
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colors.secondary,
+                                unselectedColor = MaterialTheme.colors.secondary
+                            )
+                        )
+                        Text(
+                            text = Gender.both,
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colors.secondary,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
                 item {
                     OutlinedButton(
