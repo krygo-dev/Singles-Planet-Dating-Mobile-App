@@ -35,8 +35,6 @@ class ProfileViewModel @Inject constructor(
     private val _user = mutableStateOf(User())
     val user: State<User> = _user
 
-    private val _photoURL = mutableStateOf("")
-
     init {
         onEvent(ProfileEvent.GetUserData)
     }
@@ -134,7 +132,6 @@ class ProfileViewModel @Inject constructor(
                                         error = "",
                                         result = result.data
                                     )
-                                    _photoURL.value = result.data.toString()
                                     _user.value = user.value.copy(
                                         photoURL = result.data.toString()
                                     )

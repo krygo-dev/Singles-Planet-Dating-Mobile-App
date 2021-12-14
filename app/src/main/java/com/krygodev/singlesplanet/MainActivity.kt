@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import com.krygodev.singlesplanet.composables.SetupNavGraph
@@ -18,8 +20,11 @@ import com.krygodev.singlesplanet.ui.theme.SinglesPlanetTheme
 import com.krygodev.singlesplanet.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalCoilApi
+@ExperimentalPermissionsApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -1,16 +1,18 @@
 package com.krygodev.singlesplanet.home
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
+import com.krygodev.singlesplanet.repository.PairingRepository
+import com.krygodev.singlesplanet.repository.ProfileRepository
 import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
-import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val _authenticationRepository: AuthenticationRepository
+    private val _authenticationRepository: AuthenticationRepository,
+    private val _profileRepository: ProfileRepository,
+    private val _pairingRepository: PairingRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf(LoadingState())
@@ -29,8 +33,133 @@ class HomeViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    /*fun onEvent(event: HomeEvent) {
+    private val _user = mutableStateOf(User())
+    val user: State<User> = _user
+
+    private val _usersList = mutableStateOf(listOf<User>())
+    val usersList: State<List<User>> = _usersList
+
+    init {
+        onEvent(HomeEvent.GetUserData)
+        onEvent(HomeEvent.GetUsers)
+    }
+
+    fun onEvent(event: HomeEvent) {
         when (event) {
+            is HomeEvent.GetUserData -> {
+                viewModelScope.launch {
+                    val currentUser = _authenticationRepository.getCurrentUser()
+                    if (currentUser == null) {
+                        _eventFlow.emit(UIEvent.ShowSnackbar("Unexpected error!"))
+                    } else {
+                        _profileRepository.getUserData(uid = currentUser.uid).onEach { result ->
+                            when (result) {
+                                is Resource.Loading -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = true,
+                                        error = "",
+                                        result = result.data
+                                    )
+                                }
+                                is Resource.Success -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = "",
+                                        result = result.data
+                                    )
+
+                                    _user.value = result.data!!
+                                }
+                                is Resource.Error -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = result.message!!,
+                                        result = result.data
+                                    )
+                                    _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                                }
+                            }
+                        }.launchIn(this)
+                    }
+                }
+            }
+            is HomeEvent.UpdateUserLocalization -> {
+                viewModelScope.launch {
+                    _profileRepository.setOrUpdateUserData(user = user.value).onEach { result ->
+                        when (result) {
+                            is Resource.Loading -> {
+                                _state.value = state.value.copy(
+                                    isLoading = true,
+                                    error = "",
+                                    result = result.data
+                                )
+                            }
+                            is Resource.Success -> {
+                                _state.value = state.value.copy(
+                                    isLoading = false,
+                                    error = "",
+                                    result = result.data
+                                )
+                                _eventFlow.emit(UIEvent.ShowSnackbar("Localization updated!"))
+                            }
+                            is Resource.Error -> {
+                                _state.value = state.value.copy(
+                                    isLoading = false,
+                                    error = result.message!!,
+                                    result = result.data
+                                )
+                                _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                            }
+                        }
+                    }.launchIn(this)
+                }
+            }
+            is HomeEvent.SetUserLocation -> {
+                _user.value = user.value.copy(
+                    location = event.value
+                )
+
+                if (user.value.uid != null) {
+                    onEvent(HomeEvent.UpdateUserLocalization)
+                }
+            }
+            is HomeEvent.GetUsers -> {
+                viewModelScope.launch {
+                    _pairingRepository.getUsers().onEach { result ->
+                        when (result) {
+                            is Resource.Loading -> {
+                                _state.value = state.value.copy(
+                                    isLoading = true,
+                                    error = "",
+                                    result = result.data
+                                )
+                            }
+                            is Resource.Success -> {
+                                _state.value = state.value.copy(
+                                    isLoading = false,
+                                    error = "",
+                                    result = result.data
+                                )
+
+                                _usersList.value = result.data!!
+
+                                Log.d("VIEWMODEL", _usersList.value.toString())
+
+                                _eventFlow.emit(UIEvent.ShowSnackbar("Users loaded!"))
+                            }
+                            is Resource.Error -> {
+                                _state.value = state.value.copy(
+                                    isLoading = false,
+                                    error = result.message!!,
+                                    result = result.data
+                                )
+                                _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                            }
+                        }
+                    }.launchIn(this)
+
+                }
+            }
         }
-    }*/
+    }
 }

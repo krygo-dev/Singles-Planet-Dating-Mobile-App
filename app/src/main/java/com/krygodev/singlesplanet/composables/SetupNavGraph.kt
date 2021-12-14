@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import coil.annotation.ExperimentalCoilApi
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.krygodev.singlesplanet.home.HomeScreen
 import com.krygodev.singlesplanet.pairs.PairsScreen
 import com.krygodev.singlesplanet.profile.ProfileScreen
@@ -15,6 +17,8 @@ import com.krygodev.singlesplanet.startup.StartupScreen
 import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Screen
 
+@ExperimentalCoilApi
+@ExperimentalPermissionsApi
 @Composable
 fun SetupNavGraph(
     navController: NavHostController
@@ -48,6 +52,8 @@ fun NavGraphBuilder.authenticationNavGraph(
     }
 }
 
+@ExperimentalPermissionsApi
+@ExperimentalCoilApi
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController
 ) {

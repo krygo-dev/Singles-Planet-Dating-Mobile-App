@@ -3,10 +3,7 @@ package com.krygodev.singlesplanet.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.krygodev.singlesplanet.repository.AuthenticationRepository
-import com.krygodev.singlesplanet.repository.AuthenticationRepositoryImpl
-import com.krygodev.singlesplanet.repository.ProfileRepository
-import com.krygodev.singlesplanet.repository.ProfileRepositoryImpl
+import com.krygodev.singlesplanet.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,5 +48,13 @@ object AppModule {
         firebaseStorage: FirebaseStorage
     ): ProfileRepository {
         return ProfileRepositoryImpl(firebaseFirestore, firebaseStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun providePairingRepository(
+        firebaseFirestore: FirebaseFirestore
+    ): PairingRepository {
+        return PairingRepositoryImpl(firebaseFirestore)
     }
 }
