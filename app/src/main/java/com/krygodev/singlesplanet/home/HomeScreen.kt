@@ -4,8 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Looper
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Hardware
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -157,10 +162,55 @@ fun HomeScreen(
                     )
                 }
             } else {
-                Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                    usersList.forEach { userInList ->
-                        ProfileCard(user = userInList)
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box {
+                        usersList.forEach { userInList ->
+                            ProfileCard(user = userInList)
+                        }
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        IconButton(
+                            onClick = {
+                                Log.d(Constants.HOME_SCREEN_TAG, usersList.toString())
+                                viewModel.onEvent(HomeEvent.SelectNo(usersList[usersList.lastIndex].uid!!))
+                            },
+                            modifier = Modifier
+                                .size(60.dp)
+                                .border(2.dp, MaterialTheme.colors.secondary, CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Hardware,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.secondary,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                Log.d(Constants.HOME_SCREEN_TAG, usersList.toString())
+                                viewModel.onEvent(HomeEvent.SelectYes(usersList[usersList.lastIndex].uid!!))
+                            },
+                            modifier = Modifier
+                                .size(60.dp)
+                                .border(2.dp, MaterialTheme.colors.primaryVariant, CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Favorite,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.primaryVariant,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }

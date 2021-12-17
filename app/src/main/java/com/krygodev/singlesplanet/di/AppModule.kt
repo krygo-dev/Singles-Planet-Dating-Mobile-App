@@ -54,7 +54,7 @@ object AppModule {
     @Singleton
     fun providePairingRepository(
         firebaseFirestore: FirebaseFirestore
-    ): PairingRepository {
-        return PairingRepositoryImpl(firebaseFirestore)
+    ): PairsRepository {
+        return PairsRepositoryImpl(firebaseFirestore)
     }
 }

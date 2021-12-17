@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
-class PairingRepositoryImpl(
+class PairsRepositoryImpl(
     private val _firebaseFirestore: FirebaseFirestore
-) : PairingRepository {
+) : PairsRepository {
 
     override suspend fun getUsers(): Flow<Resource<List<User>>> = flow {
         emit(Resource.Loading())

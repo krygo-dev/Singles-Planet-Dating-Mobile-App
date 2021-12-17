@@ -32,4 +32,6 @@ data class User(
     val interestedGender: String? = null,
     val photoURL: String? = null,
     val location: List<Double>? = null,
+    val selectedProfiles: List<String> = listOf(),
+    val pairs: List<String> = listOf()
 )

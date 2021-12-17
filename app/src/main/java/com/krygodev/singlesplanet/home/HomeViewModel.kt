@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
-import com.krygodev.singlesplanet.repository.PairingRepository
+import com.krygodev.singlesplanet.repository.PairsRepository
 import com.krygodev.singlesplanet.repository.ProfileRepository
 import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val _authenticationRepository: AuthenticationRepository,
     private val _profileRepository: ProfileRepository,
-    private val _pairingRepository: PairingRepository
+    private val _pairingRepository: PairsRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf(LoadingState())
@@ -38,6 +38,8 @@ class HomeViewModel @Inject constructor(
 
     private val _usersList = mutableStateOf(listOf<User>())
     val usersList: State<List<User>> = _usersList
+
+    private var _userSelectedProfiles = mutableListOf<String>()
 
     init {
         onEvent(HomeEvent.GetUserData)
@@ -69,6 +71,8 @@ class HomeViewModel @Inject constructor(
                                     )
 
                                     _user.value = result.data!!
+
+                                    _userSelectedProfiles = user.value.selectedProfiles.toMutableList()
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -144,8 +148,6 @@ class HomeViewModel @Inject constructor(
                                 _usersList.value = result.data!!
 
                                 Log.d("VIEWMODEL", _usersList.value.toString())
-
-                                _eventFlow.emit(UIEvent.ShowSnackbar("Users loaded!"))
                             }
                             is Resource.Error -> {
                                 _state.value = state.value.copy(
@@ -159,6 +161,18 @@ class HomeViewModel @Inject constructor(
                     }.launchIn(this)
 
                 }
+            }
+            is HomeEvent.SelectNo -> {
+                _usersList.value = usersList.value.toMutableList().also { list -> list.removeIf { it.uid == event.value } }
+            }
+            is HomeEvent.SelectYes -> {
+                _userSelectedProfiles.add(event.value)
+
+                _user.value = user.value.copy(
+                    selectedProfiles = _userSelectedProfiles
+                )
+
+                Log.e("HOME_EVENT_SELECT_YES", user.value.selectedProfiles.toString())
             }
         }
     }
