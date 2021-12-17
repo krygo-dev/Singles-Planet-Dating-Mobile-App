@@ -30,6 +30,8 @@ data class User(
     val bio: String? = null,
     val gender: String? = null,
     val interestedGender: String? = null,
+    val searchDistance: Float = 20.0f,
+    val searchAge: List<Float> = listOf(18f, 25f),
     val photoURL: String? = null,
     val location: List<Double>? = null,
     val selectedProfiles: List<String> = listOf(),

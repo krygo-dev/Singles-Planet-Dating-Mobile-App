@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background">#FFFAE0B1</color>
     <color name="purple_dark">#FF49195C</color>
+    <color name="purple_light">#FF724585</color>
     <color name="pink_dark">#FFED7385</color>
     <color name="pink_light">#FFEF817C</color>
 </resources>

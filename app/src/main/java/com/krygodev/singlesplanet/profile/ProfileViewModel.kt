@@ -190,6 +190,16 @@ class ProfileViewModel @Inject constructor(
                     interestedGender = event.value
                 )
             }
+            is ProfileEvent.UpdateSearchAge -> {
+                _user.value = user.value.copy(
+                    searchAge = event.value
+                )
+            }
+            is ProfileEvent.UpdateSearchDistance -> {
+                _user.value = user.value.copy(
+                    searchDistance = event.value
+                )
+            }
         }
     }
 }

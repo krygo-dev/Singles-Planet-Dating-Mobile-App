@@ -167,9 +167,21 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Box {
-                        usersList.forEach { userInList ->
-                            ProfileCard(user = userInList)
+                    if (usersList.isEmpty()) {
+                        Box(
+                            modifier = Modifier.height(550.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                text = "No more profiles to show! \n" + "Change settings to search for more."
+                            )
+                        }
+                    } else {
+                        Box {
+                            usersList.forEach { userInList ->
+                                ProfileCard(user = userInList)
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
@@ -179,7 +191,6 @@ fun HomeScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                Log.d(Constants.HOME_SCREEN_TAG, usersList.toString())
                                 viewModel.onEvent(HomeEvent.SelectNo(usersList[usersList.lastIndex].uid!!))
                             },
                             modifier = Modifier
@@ -195,7 +206,6 @@ fun HomeScreen(
                         }
                         IconButton(
                             onClick = {
-                                Log.d(Constants.HOME_SCREEN_TAG, usersList.toString())
                                 viewModel.onEvent(HomeEvent.SelectYes(usersList[usersList.lastIndex].uid!!))
                             },
                             modifier = Modifier

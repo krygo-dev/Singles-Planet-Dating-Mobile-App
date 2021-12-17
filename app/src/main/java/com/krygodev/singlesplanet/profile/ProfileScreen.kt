@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +32,7 @@ import com.krygodev.singlesplanet.util.UIEvent
 import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 
+@ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
 fun ProfileScreen(
@@ -100,7 +102,10 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 item {
-                    Box(contentAlignment = Alignment.TopEnd) {
+                    Box(
+                        modifier = Modifier.height(550.dp),
+                        contentAlignment = Alignment.TopEnd
+                    ) {
                         if (photoUriState.value != null) {
                             Image(
                                 painter = rememberImagePainter(
@@ -110,7 +115,7 @@ fun ProfileScreen(
                                     }
                                 ),
                                 contentDescription = null,
-                                modifier = Modifier.size(300.dp)
+                                contentScale = ContentScale.FillBounds
                             )
                         } else {
                             Image(
@@ -121,7 +126,7 @@ fun ProfileScreen(
                                     }
                                 ),
                                 contentDescription = null,
-                                modifier = Modifier.size(300.dp)
+                                contentScale = ContentScale.FillBounds
                             )
                         }
 
@@ -244,6 +249,45 @@ fun ProfileScreen(
                             fontSize = 20.sp
                         )
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
+                }
+                item {
+                    Text(
+                        text = "Your search distance is: ${user.searchDistance.toInt()} km",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Slider(
+                        value = user.searchDistance,
+                        onValueChange = {
+                            viewModel.onEvent(ProfileEvent.UpdateSearchDistance(it))
+                        },
+                        valueRange = 5f..150f,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+                item {
+                    Text(
+                        text = "Your search age is: ${user.searchAge.first().toInt()} - ${user.searchAge.last().toInt()}",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    RangeSlider(
+                        values = user.searchAge.first()..user.searchAge.last(),
+                        onValueChange = {
+                            viewModel.onEvent(
+                                ProfileEvent.UpdateSearchAge(
+                                    listOf(
+                                        it.start,
+                                        it.endInclusive
+                                    )
+                                )
+                            )
+                        },
+                        valueRange = 18f..99f,
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 item {
@@ -270,7 +314,7 @@ fun ProfileScreen(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
-                item { 
+                item {
                     Text(
                         text = "Or",
                         fontSize = 16.sp,

@@ -13,7 +13,6 @@ import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
