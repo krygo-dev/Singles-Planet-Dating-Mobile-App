@@ -13,6 +13,7 @@ import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -22,9 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val _authenticationRepository: AuthenticationRepository,
-    private val _profileRepository: ProfileRepository,
-    private val _pairingRepository: PairsRepository
+        private val _authenticationRepository: AuthenticationRepository,
+        private val _profileRepository: ProfileRepository,
+        private val _pairingRepository: PairsRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf(LoadingState())
@@ -58,16 +59,16 @@ class HomeViewModel @Inject constructor(
                             when (result) {
                                 is Resource.Loading -> {
                                     _state.value = state.value.copy(
-                                        isLoading = true,
-                                        error = "",
-                                        result = result.data
+                                            isLoading = true,
+                                            error = "",
+                                            result = result.data
                                     )
                                 }
                                 is Resource.Success -> {
                                     _state.value = state.value.copy(
-                                        isLoading = false,
-                                        error = "",
-                                        result = result.data
+                                            isLoading = false,
+                                            error = "",
+                                            result = result.data
                                     )
 
                                     _user.value = result.data!!
@@ -76,9 +77,9 @@ class HomeViewModel @Inject constructor(
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
-                                        isLoading = false,
-                                        error = result.message!!,
-                                        result = result.data
+                                            isLoading = false,
+                                            error = result.message!!,
+                                            result = result.data
                                     )
                                     _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
                                 }
@@ -87,30 +88,29 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
-            is HomeEvent.UpdateUserLocalization -> {
+            is HomeEvent.UpdateUserData -> {
                 viewModelScope.launch {
                     _profileRepository.setOrUpdateUserData(user = user.value).onEach { result ->
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(
-                                    isLoading = true,
-                                    error = "",
-                                    result = result.data
+                                        isLoading = true,
+                                        error = "",
+                                        result = result.data
                                 )
                             }
                             is Resource.Success -> {
                                 _state.value = state.value.copy(
-                                    isLoading = false,
-                                    error = "",
-                                    result = result.data
+                                        isLoading = false,
+                                        error = "",
+                                        result = result.data
                                 )
-                                _eventFlow.emit(UIEvent.ShowSnackbar("Localization updated!"))
                             }
                             is Resource.Error -> {
                                 _state.value = state.value.copy(
-                                    isLoading = false,
-                                    error = result.message!!,
-                                    result = result.data
+                                        isLoading = false,
+                                        error = result.message!!,
+                                        result = result.data
                                 )
                                 _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
                             }
@@ -120,11 +120,11 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.SetUserLocation -> {
                 _user.value = user.value.copy(
-                    location = event.value
+                        location = event.value
                 )
 
                 if (user.value.uid != null) {
-                    onEvent(HomeEvent.UpdateUserLocalization)
+                    onEvent(HomeEvent.UpdateUserData)
                 }
             }
             is HomeEvent.GetUsers -> {
@@ -133,16 +133,16 @@ class HomeViewModel @Inject constructor(
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(
-                                    isLoading = true,
-                                    error = "",
-                                    result = result.data
+                                        isLoading = true,
+                                        error = "",
+                                        result = result.data
                                 )
                             }
                             is Resource.Success -> {
                                 _state.value = state.value.copy(
-                                    isLoading = false,
-                                    error = "",
-                                    result = result.data
+                                        isLoading = false,
+                                        error = "",
+                                        result = result.data
                                 )
 
                                 _usersList.value = result.data!!
@@ -151,9 +151,9 @@ class HomeViewModel @Inject constructor(
                             }
                             is Resource.Error -> {
                                 _state.value = state.value.copy(
-                                    isLoading = false,
-                                    error = result.message!!,
-                                    result = result.data
+                                        isLoading = false,
+                                        error = result.message!!,
+                                        result = result.data
                                 )
                                 _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
                             }
@@ -163,13 +163,18 @@ class HomeViewModel @Inject constructor(
                 }
             }
             is HomeEvent.SelectNo -> {
-                _usersList.value = usersList.value.toMutableList().also { list -> list.removeIf { it.uid == event.value } }
+                _usersList.value = usersList.value.toMutableList().also { list ->
+                    list.removeIf { it.uid == event.value }
+                }
             }
             is HomeEvent.SelectYes -> {
                 _userSelectedProfiles.add(event.value)
 
+                // Delete selected profile from list
+                onEvent(HomeEvent.SelectNo(event.value))
+
                 _user.value = user.value.copy(
-                    selectedProfiles = _userSelectedProfiles
+                        selectedProfiles = _userSelectedProfiles
                 )
 
                 Log.e("HOME_EVENT_SELECT_YES", user.value.selectedProfiles.toString())

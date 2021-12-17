@@ -5,6 +5,6 @@ sealed class HomeEvent {
     data class SelectYes(val value: String): HomeEvent()
     data class SelectNo(val value: String): HomeEvent()
     object GetUserData: HomeEvent()
-    object UpdateUserLocalization: HomeEvent()
+    object UpdateUserData: HomeEvent()
     object GetUsers: HomeEvent()
 }
