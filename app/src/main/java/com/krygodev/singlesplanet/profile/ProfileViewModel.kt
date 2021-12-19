@@ -197,7 +197,7 @@ class ProfileViewModel @Inject constructor(
             }
             is ProfileEvent.UpdateSearchDistance -> {
                 _user.value = user.value.copy(
-                    searchDistance = event.value
+                    searchDistance = event.value.toInt().toFloat()
                 )
             }
         }

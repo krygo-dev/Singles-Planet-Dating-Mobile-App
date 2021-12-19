@@ -280,8 +280,8 @@ fun ProfileScreen(
                             viewModel.onEvent(
                                 ProfileEvent.UpdateSearchAge(
                                     listOf(
-                                        it.start,
-                                        it.endInclusive
+                                        it.start.toInt().toFloat(),
+                                        it.endInclusive.toInt().toFloat()
                                     )
                                 )
                             )

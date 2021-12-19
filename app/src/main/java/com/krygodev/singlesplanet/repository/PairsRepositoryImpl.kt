@@ -1,5 +1,6 @@
 package com.krygodev.singlesplanet.repository
 
+import android.util.Log
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -15,11 +16,19 @@ class PairsRepositoryImpl(
     private val _firebaseFirestore: FirebaseFirestore
 ) : PairsRepository {
 
-    override suspend fun getUsers(): Flow<Resource<List<User>>> = flow {
+    override suspend fun getUsers(user: User): Flow<Resource<List<User>>> = flow {
         emit(Resource.Loading())
 
         try {
-            val result = _firebaseFirestore.collection(Constants.USER_COLLECTION).get().await()
+
+            val result = _firebaseFirestore
+                .collection(Constants.USER_COLLECTION)
+                .whereNotEqualTo("uid", user.uid)
+                .whereEqualTo("gender", user.interestedGender)
+                .get()
+                .await()
+
+            Log.e("REPO", result.documents.toString())
 
             emit(Resource.Success(result.toObjects(User::class.java)))
 
