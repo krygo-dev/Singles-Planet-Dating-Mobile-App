@@ -55,6 +55,10 @@ class PairsRepositoryImpl(
                 if (distance > user.searchDistance) {
                     profilesToRemove.add(profile)
                 }
+
+                if (user.selectedProfiles.contains(profile.uid) || user.pairs.contains(profile.uid)) {
+                    profilesToRemove.add(profile)
+                }
             }
 
             profiles.removeAll(profilesToRemove)

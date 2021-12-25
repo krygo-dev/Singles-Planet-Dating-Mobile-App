@@ -44,7 +44,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-    val user = viewModel.user.value
     val usersList = viewModel.usersList.value
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current

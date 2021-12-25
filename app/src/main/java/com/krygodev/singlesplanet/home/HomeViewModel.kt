@@ -170,6 +170,13 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.SelectYes -> {
                 if (!_user.value.selectedProfiles.contains(event.value)) {
+
+                    _usersList.value.forEach { userInList ->
+                        if (userInList.selectedProfiles.contains(user.value.uid)) {
+                            onEvent(HomeEvent.NewPair(userInList))
+                        }
+                    }
+
                     _userSelectedProfiles.add(event.value)
 
                     // Delete selected profile from list
@@ -183,6 +190,9 @@ class HomeViewModel @Inject constructor(
 
                     Log.e("HOME_EVENT_SELECT_YES", user.value.selectedProfiles.toString())
                 }
+            }
+            is HomeEvent.NewPair -> {
+
             }
         }
     }
