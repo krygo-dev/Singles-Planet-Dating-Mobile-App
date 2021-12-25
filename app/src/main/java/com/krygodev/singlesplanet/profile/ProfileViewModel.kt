@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -151,6 +152,11 @@ class ProfileViewModel @Inject constructor(
             }
             is ProfileEvent.UpdateUserData -> {
                 viewModelScope.launch {
+                    _user.value = user.value.copy(
+                        userAge = Calendar.getInstance()
+                            .get(Calendar.YEAR) - user.value.birthDate?.substring(0, 4)?.toInt()!!
+                    )
+
                     _profileRepository.setOrUpdateUserData(user = user.value).onEach { result ->
                         when (result) {
                             is Resource.Loading -> {

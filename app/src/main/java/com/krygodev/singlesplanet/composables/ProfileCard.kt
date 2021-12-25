@@ -26,10 +26,7 @@ fun ProfileCard(
 ) {
     var userAge: Int? = null
     user.birthDate?.let {
-        userAge =
-            Calendar.getInstance()
-                .get(Calendar.YEAR) - user.birthDate
-                .substring(user.birthDate.lastIndexOf("-") + 1).toInt()
+        userAge = Calendar.getInstance().get(Calendar.YEAR) - user.birthDate.substring(0, 4).toInt()
     }
 
     Card(

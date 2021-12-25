@@ -43,7 +43,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         onEvent(HomeEvent.GetUserData)
-        //onEvent(HomeEvent.GetUsers)
     }
 
     fun onEvent(event: HomeEvent) {

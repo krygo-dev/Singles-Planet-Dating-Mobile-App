@@ -27,6 +27,7 @@ data class User(
     val email: String? = null,
     val name: String? = null,
     val birthDate: String? = null,
+    val userAge: Int? = null,
     val bio: String? = null,
     val gender: String? = null,
     val interestedGender: String? = null,

@@ -55,7 +55,7 @@ fun ProfileScreen(
 
     user.birthDate?.let {
         userAge =
-            Calendar.getInstance().get(Calendar.YEAR) - user.birthDate.substring(5).toInt()
+            Calendar.getInstance().get(Calendar.YEAR) - user.birthDate.substring(0, 4).toInt()
     }
 
     LaunchedEffect(key1 = true) {

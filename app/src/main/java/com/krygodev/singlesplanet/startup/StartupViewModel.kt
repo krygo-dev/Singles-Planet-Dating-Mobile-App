@@ -51,7 +51,8 @@ class StartupViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var user: User = User()
+    private var _user: User = User()
+    private var _userAge: Int? = Calendar.getInstance().get(Calendar.YEAR)
 
     init {
         onEvent(StartupEvent.GetUserData)
@@ -80,17 +81,18 @@ class StartupViewModel @Inject constructor(
                     ) {
                         _eventFlow.emit(UIEvent.ShowSnackbar("First select photo, your birth date and gender and gender you looking for!"))
                     } else {
-                        user = User(
-                            uid = user.uid,
-                            email = user.email,
-                            name = user.name,
+                        _user = User(
+                            uid = _user.uid,
+                            email = _user.email,
+                            name = _user.name,
                             birthDate = birthDate.value,
+                            userAge = _userAge,
                             bio = bio.value,
                             gender = gender.value,
                             interestedGender = interestedGender.value,
                             photoURL = photoURL.value
                         )
-                        _profileRepository.setOrUpdateUserData(user = user).onEach { result ->
+                        _profileRepository.setOrUpdateUserData(user = _user).onEach { result ->
                             when (result) {
                                 is Resource.Loading -> {
                                     _state.value = state.value.copy(
@@ -144,7 +146,7 @@ class StartupViewModel @Inject constructor(
                                         result = result.data
                                     )
 
-                                    user = result.data!!
+                                    _user = result.data!!
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -164,7 +166,7 @@ class StartupViewModel @Inject constructor(
                     if (event.value == null) {
                         _eventFlow.emit(UIEvent.ShowSnackbar("Select your profile photo!"))
                     } else {
-                        _profileRepository.uploadUserPhoto(uid = user.uid!!, photoURI = event.value)
+                        _profileRepository.uploadUserPhoto(uid = _user.uid!!, photoURI = event.value)
                             .onEach { result ->
                                 when (result) {
                                     is Resource.Loading -> {
@@ -209,7 +211,8 @@ class StartupViewModel @Inject constructor(
         DatePickerDialog(context, { _, year, month, day ->
             val pickedDate = Calendar.getInstance()
             pickedDate.set(year, month, day)
-            _birthDate.value = "$day-$month-$year"
+            _birthDate.value = "$year-$month-$day"
+            _userAge?.minus(year)
             Log.d("VIEWMODEL", "Chosen date: ${birthDate.value}")
         }, startYear, startMonth, startDay).show()
     }
