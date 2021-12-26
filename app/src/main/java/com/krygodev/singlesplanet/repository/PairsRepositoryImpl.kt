@@ -39,8 +39,6 @@ class PairsRepositoryImpl(
                 .get()
                 .await()
 
-            Log.e("REPO_1", result.documents.toString())
-
             val x1 = user.location!!.first()
             val y1 = user.location.last()
             val profiles = result.toObjects(User::class.java)
@@ -65,9 +63,30 @@ class PairsRepositoryImpl(
 
             profiles.removeIf { it.uid == user.uid }
 
-            Log.e("REPO_2", profiles.toString())
-
             emit(Resource.Success(profiles))
+
+        } catch (e: HttpException) {
+            emit(Resource.Error(message = "Something went wrong!"))
+        } catch (e: IOException) {
+            emit(Resource.Error(message = "Couldn't reach server, check your internet connection!"))
+        } catch (e: FirebaseFirestoreException) {
+            emit(Resource.Error(message = e.localizedMessage!!))
+        }
+    }
+
+    override suspend fun getPairs(user: User): Flow<Resource<List<User>>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val result = _firebaseFirestore
+                .collection(Constants.USER_COLLECTION)
+                .whereIn("uid", user.pairs.toList())
+                .get()
+                .await()
+
+            Log.e("REPO_1", result.documents.toString())
+
+            emit(Resource.Success(result.toObjects(User::class.java)))
 
         } catch (e: HttpException) {
             emit(Resource.Error(message = "Something went wrong!"))

@@ -1,5 +1,6 @@
 package com.krygodev.singlesplanet.composables
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -17,6 +18,7 @@ import com.krygodev.singlesplanet.startup.StartupScreen
 import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Screen
 
+@ExperimentalMaterialApi
 @ExperimentalCoilApi
 @ExperimentalPermissionsApi
 @Composable
@@ -52,6 +54,7 @@ fun NavGraphBuilder.authenticationNavGraph(
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalPermissionsApi
 @ExperimentalCoilApi
 fun NavGraphBuilder.homeNavGraph(

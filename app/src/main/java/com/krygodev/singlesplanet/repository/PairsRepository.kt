@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface PairsRepository {
 
     suspend fun getUsers(user: User): Flow<Resource<List<User>>>
+
+    suspend fun getPairs(user: User): Flow<Resource<List<User>>>
 }

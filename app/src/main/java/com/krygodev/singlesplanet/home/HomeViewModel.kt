@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     val user: State<User> = _user
 
     private val _selectedUser = mutableStateOf(User())
-    val selectedUser: State<User> = _selectedUser
+    private val selectedUser: State<User> = _selectedUser
 
     private val _usersList = mutableStateOf(listOf<User>())
     val usersList: State<List<User>> = _usersList
@@ -150,8 +150,6 @@ class HomeViewModel @Inject constructor(
                                 )
 
                                 _usersList.value = result.data!!
-
-                                Log.d("VIEWMODEL", _usersList.value.toString())
                             }
                             is Resource.Error -> {
                                 _state.value = state.value.copy(

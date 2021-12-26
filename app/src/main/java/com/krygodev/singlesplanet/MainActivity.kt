@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import com.krygodev.singlesplanet.ui.theme.SinglesPlanetTheme
 import com.krygodev.singlesplanet.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalMaterialApi
 @ExperimentalCoilApi
 @ExperimentalPermissionsApi
 @AndroidEntryPoint
