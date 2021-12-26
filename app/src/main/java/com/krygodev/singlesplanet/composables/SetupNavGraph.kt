@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.krygodev.singlesplanet.details.DetailsScreen
 import com.krygodev.singlesplanet.home.HomeScreen
 import com.krygodev.singlesplanet.pairs.PairsScreen
 import com.krygodev.singlesplanet.profile.ProfileScreen
@@ -72,6 +73,9 @@ fun NavGraphBuilder.homeNavGraph(
         }
         composable(route = Screen.ProfileScreen.route) {
             ProfileScreen(navController = navController)
+        }
+        composable(route = Screen.DetailsScreen.route + "/{uid}") {
+            DetailsScreen(navController = navController)
         }
     }
 }

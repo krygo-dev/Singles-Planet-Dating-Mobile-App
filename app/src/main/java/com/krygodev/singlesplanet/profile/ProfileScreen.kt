@@ -103,7 +103,7 @@ fun ProfileScreen(
             ) {
                 item {
                     Box(
-                        modifier = Modifier.height(550.dp),
+                        modifier = Modifier.height(500.dp),
                         contentAlignment = Alignment.TopEnd
                     ) {
                         if (photoUriState.value != null) {
@@ -115,7 +115,8 @@ fun ProfileScreen(
                                     }
                                 ),
                                 contentDescription = null,
-                                contentScale = ContentScale.FillBounds
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
                             )
                         } else {
                             Image(

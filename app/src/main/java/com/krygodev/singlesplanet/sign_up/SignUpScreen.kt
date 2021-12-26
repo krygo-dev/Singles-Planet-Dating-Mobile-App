@@ -51,7 +51,7 @@ fun SignUpScreen(
                     navController.popBackStack()
                 }
                 else -> {
-                    Log.d(Constants.SIGN_UP_SCREEN_TAG, "Something went wrong!")
+                    Log.d(Constants.LOG_TAG, "Something went wrong!")
                 }
             }
         }

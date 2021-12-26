@@ -85,36 +85,38 @@ class PairsViewModel @Inject constructor(
             }
             is PairsEvent.GetPairs -> {
                 viewModelScope.launch {
-                    _pairingRepository.getPairs(user = event.value).onEach { result ->
-                        when (result) {
-                            is Resource.Loading -> {
-                                _state.value = state.value.copy(
-                                    isLoading = true,
-                                    error = "",
-                                    result = result.data
-                                )
-                            }
-                            is Resource.Success -> {
-                                _state.value = state.value.copy(
-                                    isLoading = false,
-                                    error = "",
-                                    result = result.data
-                                )
+                    if (!user.value.pairs.isNullOrEmpty()) {
+                        _pairingRepository.getPairs(user = event.value).onEach { result ->
+                            when (result) {
+                                is Resource.Loading -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = true,
+                                        error = "",
+                                        result = result.data
+                                    )
+                                }
+                                is Resource.Success -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = "",
+                                        result = result.data
+                                    )
 
-                                _pairs.value = result.data!!
+                                    _pairs.value = result.data!!
 
-                                _eventFlow.emit(UIEvent.ShowSnackbar("Pairs loaded!"))
+                                    _eventFlow.emit(UIEvent.ShowSnackbar("Pairs loaded!"))
+                                }
+                                is Resource.Error -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = result.message!!,
+                                        result = result.data
+                                    )
+                                    _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                                }
                             }
-                            is Resource.Error -> {
-                                _state.value = state.value.copy(
-                                    isLoading = false,
-                                    error = result.message!!,
-                                    result = result.data
-                                )
-                                _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
-                            }
-                        }
-                    }.launchIn(this)
+                        }.launchIn(this)
+                    }
                 }
             }
         }

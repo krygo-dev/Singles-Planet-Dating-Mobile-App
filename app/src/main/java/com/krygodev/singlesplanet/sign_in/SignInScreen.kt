@@ -52,7 +52,7 @@ fun SignInScreen(
                     navController.navigate(event.route)
                 }
                 else -> {
-                    Log.d(Constants.SIGN_IN_SCREEN_TAG, "Something went wrong!")
+                    Log.d(Constants.LOG_TAG, "Something went wrong!")
                 }
             }
         }

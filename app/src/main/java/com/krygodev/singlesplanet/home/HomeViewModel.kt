@@ -1,6 +1,5 @@
 package com.krygodev.singlesplanet.home
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -187,15 +186,15 @@ class HomeViewModel @Inject constructor(
                         )
 
                         onEvent(HomeEvent.UpdateUserData(user.value))
-
-                        Log.e("HOME_EVENT_SELECT_YES", user.value.selectedProfiles.toString())
                     }
                 }
             }
             is HomeEvent.NewPair -> {
                 onEvent(HomeEvent.SelectNo(selectedUser.value))
 
-                Log.d("PAIR:", "NEW PAIR!")
+                viewModelScope.launch {
+                    _eventFlow.emit(UIEvent.ShowSnackbar("YOU HAVE NEW PAIR"))
+                }
 
                 _selectedUser.value = selectedUser.value.copy(
                     pairs = selectedUser.value.pairs.toMutableList()

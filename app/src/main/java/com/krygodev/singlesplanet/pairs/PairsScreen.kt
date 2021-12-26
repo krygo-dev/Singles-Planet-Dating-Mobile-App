@@ -41,7 +41,7 @@ fun PairsScreen(
                     navController.navigate(event.route)
                 }
                 else -> {
-                    Log.e(Constants.HOME_SCREEN_TAG, "Something went wrong!")
+                    Log.e(Constants.LOG_TAG, "Something went wrong!")
                 }
             }
         }
@@ -63,7 +63,7 @@ fun PairsScreen(
                 )
             }
         } else {
-            if (pairs.isEmpty()) {
+            if (user.pairs.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -78,11 +78,10 @@ fun PairsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp, 16.dp, 16.dp, 58.dp),
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     items(pairs) { pair ->
-                        PairsListItem(user = pair)
+                        PairsListItem(user = pair, navController = navController)
+                        Divider()
                     }
                 }
             }

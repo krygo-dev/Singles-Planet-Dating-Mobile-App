@@ -47,7 +47,7 @@ fun HomeScreen(
     val usersList = viewModel.usersList.value
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
-    val checkInterval = 300000L
+    val checkInterval = 30000L
 
     val locationRequest =
         LocationRequest.create().apply {
@@ -71,7 +71,7 @@ fun HomeScreen(
                         )
                     )
                 } catch (e: Exception) {
-                    Log.e(Constants.HOME_SCREEN_TAG, e.message!!)
+                    Log.e(Constants.LOG_TAG, e.message!!)
                 }
             }
         }
@@ -125,7 +125,7 @@ fun HomeScreen(
                     navController.navigate(event.route)
                 }
                 else -> {
-                    Log.e(Constants.HOME_SCREEN_TAG, "Something went wrong!")
+                    Log.e(Constants.LOG_TAG, "Something went wrong!")
                 }
             }
         }
@@ -179,7 +179,7 @@ fun HomeScreen(
                     } else {
                         Box {
                             usersList.forEach { userInList ->
-                                ProfileCard(user = userInList)
+                                ProfileCard(user = userInList, navController = navController)
                             }
                         }
                     }

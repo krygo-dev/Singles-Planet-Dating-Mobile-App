@@ -1,6 +1,5 @@
 package com.krygodev.singlesplanet.repository
 
-import android.util.Log
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -83,8 +82,6 @@ class PairsRepositoryImpl(
                 .whereIn("uid", user.pairs.toList())
                 .get()
                 .await()
-
-            Log.e("REPO_1", result.documents.toString())
 
             emit(Resource.Success(result.toObjects(User::class.java)))
 

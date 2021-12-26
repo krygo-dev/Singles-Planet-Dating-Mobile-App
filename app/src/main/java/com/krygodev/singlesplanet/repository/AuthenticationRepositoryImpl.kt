@@ -98,6 +98,7 @@ class AuthenticationRepositoryImpl(
         val result =
             _firebaseFirestore.collection(Constants.USER_COLLECTION).document(user!!.uid).get()
                 .await().toObject(User::class.java)
+
         return result!!.photoURL.isNullOrEmpty()
     }
 
