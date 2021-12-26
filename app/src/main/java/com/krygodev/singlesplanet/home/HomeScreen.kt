@@ -190,7 +190,7 @@ fun HomeScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                viewModel.onEvent(HomeEvent.SelectNo(usersList[usersList.lastIndex].uid!!))
+                                viewModel.onEvent(HomeEvent.SelectNo(usersList[usersList.lastIndex]))
                             },
                             modifier = Modifier
                                 .size(60.dp)
@@ -205,7 +205,7 @@ fun HomeScreen(
                         }
                         IconButton(
                             onClick = {
-                                viewModel.onEvent(HomeEvent.SelectYes(usersList[usersList.lastIndex].uid!!))
+                                viewModel.onEvent(HomeEvent.SelectYes(usersList[usersList.lastIndex]))
                             },
                             modifier = Modifier
                                 .size(60.dp)

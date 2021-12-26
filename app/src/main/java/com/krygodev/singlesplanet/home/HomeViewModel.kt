@@ -36,6 +36,9 @@ class HomeViewModel @Inject constructor(
     private val _user = mutableStateOf(User())
     val user: State<User> = _user
 
+    private val _selectedUser = mutableStateOf(User())
+    val selectedUser: State<User> = _selectedUser
+
     private val _usersList = mutableStateOf(listOf<User>())
     val usersList: State<List<User>> = _usersList
 
@@ -91,7 +94,7 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.UpdateUserData -> {
                 viewModelScope.launch {
-                    _profileRepository.setOrUpdateUserData(user = user.value).onEach { result ->
+                    _profileRepository.setOrUpdateUserData(user = event.value).onEach { result ->
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(
@@ -125,7 +128,7 @@ class HomeViewModel @Inject constructor(
                 )
 
                 if (user.value.uid != null) {
-                    onEvent(HomeEvent.UpdateUserData)
+                    onEvent(HomeEvent.UpdateUserData(user.value))
                 }
             }
             is HomeEvent.GetUsers -> {
@@ -164,35 +167,52 @@ class HomeViewModel @Inject constructor(
                 }
             }
             is HomeEvent.SelectNo -> {
+                _selectedUser.value = event.value
                 _usersList.value = usersList.value.toMutableList().also { list ->
-                    list.removeIf { it.uid == event.value }
+                    list.remove(selectedUser.value)
                 }
             }
             is HomeEvent.SelectYes -> {
-                if (!_user.value.selectedProfiles.contains(event.value)) {
+                _selectedUser.value = event.value
+                if (!_user.value.selectedProfiles.contains(selectedUser.value.uid)) {
 
-                    _usersList.value.forEach { userInList ->
-                        if (userInList.selectedProfiles.contains(user.value.uid)) {
-                            onEvent(HomeEvent.NewPair(userInList))
-                        }
+                    if (selectedUser.value.selectedProfiles.contains(user.value.uid)) {
+                        onEvent(HomeEvent.NewPair)
+                    } else {
+                        _userSelectedProfiles.add(selectedUser.value.uid!!)
+
+                        // Delete selected profile from list
+                        onEvent(HomeEvent.SelectNo(selectedUser.value))
+
+                        _user.value = user.value.copy(
+                            selectedProfiles = _userSelectedProfiles
+                        )
+
+                        onEvent(HomeEvent.UpdateUserData(user.value))
+
+                        Log.e("HOME_EVENT_SELECT_YES", user.value.selectedProfiles.toString())
                     }
-
-                    _userSelectedProfiles.add(event.value)
-
-                    // Delete selected profile from list
-                    onEvent(HomeEvent.SelectNo(event.value))
-
-                    _user.value = user.value.copy(
-                        selectedProfiles = _userSelectedProfiles
-                    )
-
-                    onEvent(HomeEvent.UpdateUserData)
-
-                    Log.e("HOME_EVENT_SELECT_YES", user.value.selectedProfiles.toString())
                 }
             }
             is HomeEvent.NewPair -> {
+                onEvent(HomeEvent.SelectNo(selectedUser.value))
 
+                Log.d("PAIR:", "NEW PAIR!")
+
+                _selectedUser.value = selectedUser.value.copy(
+                    pairs = selectedUser.value.pairs.toMutableList()
+                        .also { it.add(user.value.uid!!) }
+                )
+                _selectedUser.value = selectedUser.value.copy(
+                    selectedProfiles = selectedUser.value.selectedProfiles.toMutableList()
+                        .also { it.remove(user.value.uid) }
+                )
+                onEvent(HomeEvent.UpdateUserData(selectedUser.value))
+
+                _user.value = user.value.copy(
+                    pairs = user.value.pairs.toMutableList().also { it.add(selectedUser.value.uid!!) }
+                )
+                onEvent(HomeEvent.UpdateUserData(user.value))
             }
         }
     }
