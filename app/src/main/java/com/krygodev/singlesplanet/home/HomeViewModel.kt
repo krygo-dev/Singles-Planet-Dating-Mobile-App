@@ -10,6 +10,7 @@ import com.krygodev.singlesplanet.repository.PairsRepository
 import com.krygodev.singlesplanet.repository.ProfileRepository
 import com.krygodev.singlesplanet.util.LoadingState
 import com.krygodev.singlesplanet.util.Resource
+import com.krygodev.singlesplanet.util.Screen
 import com.krygodev.singlesplanet.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -76,7 +77,9 @@ class HomeViewModel @Inject constructor(
                                     _userSelectedProfiles =
                                         user.value.selectedProfiles.toMutableList()
 
-                                    onEvent(HomeEvent.GetUsers)
+                                    if (!user.value.location.isNullOrEmpty()) {
+                                        onEvent(HomeEvent.GetUsers)
+                                    }
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
@@ -193,7 +196,7 @@ class HomeViewModel @Inject constructor(
                 onEvent(HomeEvent.SelectNo(selectedUser.value))
 
                 viewModelScope.launch {
-                    _eventFlow.emit(UIEvent.ShowSnackbar("YOU HAVE NEW PAIR"))
+                    _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
                 }
 
                 _selectedUser.value = selectedUser.value.copy(

@@ -11,15 +11,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Hardware
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -49,6 +48,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val checkInterval = 30000L
 
+    val showDialog = remember { mutableStateOf(false) }
+
     val locationRequest =
         LocationRequest.create().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -69,7 +70,9 @@ fun HomeScreen(
                                 location.longitude
                             )
                         )
-                    )
+                    ).also {
+                        viewModel.onEvent(HomeEvent.GetUsers)
+                    }
                 } catch (e: Exception) {
                     Log.e(Constants.LOG_TAG, e.message!!)
                 }
@@ -122,7 +125,8 @@ fun HomeScreen(
                     )
                 }
                 is UIEvent.Success -> {
-                    navController.navigate(event.route)
+                    //navController.navigate(event.route)
+                    showDialog.value = true
                 }
                 else -> {
                     Log.e(Constants.LOG_TAG, "Something went wrong!")
@@ -136,6 +140,55 @@ fun HomeScreen(
         modifier = Modifier.padding(horizontal = 8.dp),
         bottomBar = { SetupBottomNavBar(navController = navController) }
     ) {
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = {
+                    showDialog.value = false
+                },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "GREAT!",
+                            fontSize = 30.sp,
+                            color = MaterialTheme.colors.secondary
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = null,
+                            modifier = Modifier.size(70.dp),
+                            tint = MaterialTheme.colors.primaryVariant
+                        )
+                        Text(
+                            text = "YOU HAVE NEW PAIR!",
+                            fontSize = 25.sp,
+                            color = MaterialTheme.colors.secondary
+                        )
+                    }
+                },
+                buttons = {
+                    Row(
+                        modifier = Modifier.padding(all = 8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { showDialog.value = false }
+                        ) {
+                            Text(
+                                text = "Close",
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colors.secondary
+                            )
+                        }
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.background
+            )
+        }
         if (state.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -168,7 +221,7 @@ fun HomeScreen(
                 ) {
                     if (usersList.isEmpty()) {
                         Box(
-                            modifier = Modifier.height(550.dp),
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -182,44 +235,44 @@ fun HomeScreen(
                                 ProfileCard(user = userInList, navController = navController)
                             }
                         }
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        IconButton(
-                            onClick = {
-                                viewModel.onEvent(HomeEvent.SelectNo(usersList[usersList.lastIndex]))
-                            },
-                            modifier = Modifier
-                                .size(60.dp)
-                                .border(2.dp, MaterialTheme.colors.secondary, CircleShape)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Hardware,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.secondary,
-                                modifier = Modifier.size(30.dp)
-                            )
+                            IconButton(
+                                onClick = {
+                                    viewModel.onEvent(HomeEvent.SelectNo(usersList[usersList.lastIndex]))
+                                },
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .border(2.dp, MaterialTheme.colors.secondary, CircleShape)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Hardware,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colors.secondary,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    viewModel.onEvent(HomeEvent.SelectYes(usersList[usersList.lastIndex]))
+                                },
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .border(2.dp, MaterialTheme.colors.primaryVariant, CircleShape)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Favorite,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colors.primaryVariant,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
                         }
-                        IconButton(
-                            onClick = {
-                                viewModel.onEvent(HomeEvent.SelectYes(usersList[usersList.lastIndex]))
-                            },
-                            modifier = Modifier
-                                .size(60.dp)
-                                .border(2.dp, MaterialTheme.colors.primaryVariant, CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.primaryVariant,
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }

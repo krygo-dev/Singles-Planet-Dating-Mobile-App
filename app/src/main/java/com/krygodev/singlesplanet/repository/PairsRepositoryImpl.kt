@@ -62,7 +62,7 @@ class PairsRepositoryImpl(
 
             profiles.removeIf { it.uid == user.uid }
 
-            emit(Resource.Success(profiles))
+            emit(Resource.Success(profiles.shuffled()))
 
         } catch (e: HttpException) {
             emit(Resource.Error(message = "Something went wrong!"))

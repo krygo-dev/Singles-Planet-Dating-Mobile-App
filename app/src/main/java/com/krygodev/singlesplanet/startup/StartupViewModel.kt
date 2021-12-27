@@ -211,7 +211,7 @@ class StartupViewModel @Inject constructor(
             val pickedDate = Calendar.getInstance()
             pickedDate.set(year, month, day)
             _birthDate.value = "$year-$month-$day"
-            _userAge?.minus(year)
+            _userAge = _userAge?.minus(year)
         }, startYear, startMonth, startDay).show()
     }
 }
