@@ -5,6 +5,7 @@ object Constants {
     // Firebase collections
     const val USER_COLLECTION = "users"
     const val USERS_PHOTOS = "users_photos"
+    const val CHATROOMS_COLLECTION = "chatrooms"
 
     // Log tags
     const val LOG_TAG = "LOG_TAG"

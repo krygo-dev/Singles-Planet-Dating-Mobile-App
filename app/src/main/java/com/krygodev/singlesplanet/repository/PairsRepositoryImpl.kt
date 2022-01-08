@@ -3,6 +3,7 @@ package com.krygodev.singlesplanet.repository
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.krygodev.singlesplanet.model.Chatroom
 import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Gender
@@ -44,17 +45,19 @@ class PairsRepositoryImpl(
             val profilesToRemove = mutableListOf<User>()
 
             profiles.forEach { profile ->
-                val x2 = profile.location!!.first()
-                val y2 = profile.location.last()
-                val distance =
-                    sqrt((x2 - x1).pow(2) + (cos((x1 * PI) / 180) * (y2 - y1)).pow(2)) * 111.3214
+                if (!profile.location.isNullOrEmpty()) {
+                    val x2 = profile.location.first()
+                    val y2 = profile.location.last()
+                    val distance =
+                        sqrt((x2 - x1).pow(2) + (cos((x1 * PI) / 180) * (y2 - y1)).pow(2)) * 111.3214
 
-                if (distance > user.searchDistance) {
-                    profilesToRemove.add(profile)
-                }
+                    if (distance > user.searchDistance) {
+                        profilesToRemove.add(profile)
+                    }
 
-                if (user.selectedProfiles.contains(profile.uid) || user.pairs.contains(profile.uid)) {
-                    profilesToRemove.add(profile)
+                    if (user.selectedProfiles.contains(profile.uid) || user.pairs.contains(profile.uid)) {
+                        profilesToRemove.add(profile)
+                    }
                 }
             }
 
@@ -84,6 +87,29 @@ class PairsRepositoryImpl(
                 .await()
 
             emit(Resource.Success(result.toObjects(User::class.java)))
+
+        } catch (e: HttpException) {
+            emit(Resource.Error(message = "Something went wrong!"))
+        } catch (e: IOException) {
+            emit(Resource.Error(message = "Couldn't reach server, check your internet connection!"))
+        } catch (e: FirebaseFirestoreException) {
+            emit(Resource.Error(message = e.localizedMessage!!))
+        }
+    }
+
+    override suspend fun createChatroom(chatroom: Chatroom): Flow<Resource<String>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val ref = _firebaseFirestore
+                .collection(Constants.CHATROOMS_COLLECTION)
+                .document()
+
+            chatroom.chatId = ref.id
+
+            ref.set(chatroom).await()
+
+            emit(Resource.Success(ref.id))
 
         } catch (e: HttpException) {
             emit(Resource.Error(message = "Something went wrong!"))

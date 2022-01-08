@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krygodev.singlesplanet.model.Chatroom
 import com.krygodev.singlesplanet.model.User
 import com.krygodev.singlesplanet.repository.AuthenticationRepository
 import com.krygodev.singlesplanet.repository.PairsRepository
@@ -43,6 +44,7 @@ class HomeViewModel @Inject constructor(
     val usersList: State<List<User>> = _usersList
 
     private var _userSelectedProfiles = mutableListOf<String>()
+    private var _chatID = mutableStateOf("")
 
     init {
         onEvent(HomeEvent.GetUserData)
@@ -193,12 +195,6 @@ class HomeViewModel @Inject constructor(
                 }
             }
             is HomeEvent.NewPair -> {
-                onEvent(HomeEvent.SelectNo(selectedUser.value))
-
-                viewModelScope.launch {
-                    _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
-                }
-
                 _selectedUser.value = selectedUser.value.copy(
                     pairs = selectedUser.value.pairs.toMutableList()
                         .also { it.add(user.value.uid!!) }
@@ -207,12 +203,60 @@ class HomeViewModel @Inject constructor(
                     selectedProfiles = selectedUser.value.selectedProfiles.toMutableList()
                         .also { it.remove(user.value.uid) }
                 )
-                onEvent(HomeEvent.UpdateUserData(selectedUser.value))
-
                 _user.value = user.value.copy(
-                    pairs = user.value.pairs.toMutableList().also { it.add(selectedUser.value.uid!!) }
+                    pairs = user.value.pairs.toMutableList()
+                        .also { it.add(selectedUser.value.uid!!) }
                 )
-                onEvent(HomeEvent.UpdateUserData(user.value))
+
+
+                viewModelScope.launch {
+                    _eventFlow.emit(UIEvent.Success(Screen.HomeScreen.route))
+
+                    val chatroom = Chatroom(user1 = user.value.uid, user2 = selectedUser.value.uid)
+
+                    _pairingRepository.createChatroom(chatroom = chatroom)
+                        .onEach { result ->
+                            when (result) {
+                                is Resource.Loading -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = true,
+                                        error = "",
+                                        result = result.data
+                                    )
+                                }
+                                is Resource.Success -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = "",
+                                        result = result.data
+                                    )
+
+                                    _chatID.value = result.data!!
+
+                                    _selectedUser.value = selectedUser.value.copy(
+                                        chats = selectedUser.value.chats.toMutableList()
+                                            .also { it.add(_chatID.value) }
+                                    )
+                                    _user.value = user.value.copy(
+                                        chats = user.value.chats.toMutableList()
+                                            .also { it.add(_chatID.value) }
+                                    )
+
+                                    onEvent(HomeEvent.UpdateUserData(selectedUser.value))
+                                    onEvent(HomeEvent.UpdateUserData(user.value))
+                                    onEvent(HomeEvent.SelectNo(selectedUser.value))
+                                }
+                                is Resource.Error -> {
+                                    _state.value = state.value.copy(
+                                        isLoading = false,
+                                        error = result.message!!,
+                                        result = result.data
+                                    )
+                                    _eventFlow.emit(UIEvent.ShowSnackbar(result.message))
+                                }
+                            }
+                        }.launchIn(this)
+                }
             }
         }
     }
