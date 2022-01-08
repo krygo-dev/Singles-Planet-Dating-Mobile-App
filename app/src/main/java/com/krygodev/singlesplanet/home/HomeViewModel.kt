@@ -195,6 +195,8 @@ class HomeViewModel @Inject constructor(
                 }
             }
             is HomeEvent.NewPair -> {
+                onEvent(HomeEvent.SelectNo(selectedUser.value))
+
                 _selectedUser.value = selectedUser.value.copy(
                     pairs = selectedUser.value.pairs.toMutableList()
                         .also { it.add(user.value.uid!!) }
@@ -244,7 +246,6 @@ class HomeViewModel @Inject constructor(
 
                                     onEvent(HomeEvent.UpdateUserData(selectedUser.value))
                                     onEvent(HomeEvent.UpdateUserData(user.value))
-                                    onEvent(HomeEvent.SelectNo(selectedUser.value))
                                 }
                                 is Resource.Error -> {
                                     _state.value = state.value.copy(
