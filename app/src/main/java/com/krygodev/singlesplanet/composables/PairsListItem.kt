@@ -1,6 +1,6 @@
 package com.krygodev.singlesplanet.composables
 
-import android.util.Log
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Chat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,7 +21,6 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.krygodev.singlesplanet.model.User
-import com.krygodev.singlesplanet.util.Constants
 import com.krygodev.singlesplanet.util.Screen
 
 @Composable
@@ -36,9 +36,11 @@ fun PairsListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.width(280.dp).clickable {
-                navController.navigate(Screen.DetailsScreen.route + "/${user.uid}")
-            }
+            modifier = Modifier
+                .width(280.dp)
+                .clickable {
+                    navController.navigate(Screen.DetailsScreen.route + "/${user.uid}")
+                }
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -62,9 +64,15 @@ fun PairsListItem(
                 )
             }
         }
+        val context = LocalContext.current
         IconButton(
             onClick = {
-                Log.e(Constants.LOG_TAG, "Opening chat")
+                val launchIntent: Intent? =
+                    context.packageManager.getLaunchIntentForPackage("com.example.singlesplanetchat")
+                launchIntent?.addCategory(Intent.CATEGORY_LAUNCHER)
+                if (launchIntent != null) {
+                    context.startActivity(launchIntent)
+                }
             }
         ) {
             Icon(
